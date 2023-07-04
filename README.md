@@ -34,4 +34,5 @@ Data was sourced from the sumplemental material of the article, ["Application of
 
 ## AFOSR, 2023 Summer
 
+<img src="Graphics/SpiceLogo1.png" width="240" /> <img src="Graphics/cuh_logo.png" width="120" /> <img src="Graphics/afosr-logo-1.jpeg" width="240" />
 
