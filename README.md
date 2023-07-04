@@ -5,7 +5,8 @@
 This repository contains multiple *different projects*, from *multiple students*, from *multiple funders* around a common theme of nanomaterial research. Each distinct project, along with it's funders and student researchers will be listed in this ReadMe and have it's own folder within the project
 
 The **data** folder houses multiple data files across multiple projects and research directives
-- 
+- Literature_transcriptomics_review_and_data_of_Nanoparticle_Induced_Cellular_Outcomes.csv
+  - This comes from the article ["Application of Bayesian networks in determining nanoparticle-induced cellular outcomes using transcriptomics"](https://www.tandfonline.com/doi/full/10.1080/17435390.2019.1595206).
 
 
 
@@ -27,3 +28,10 @@ The Airforce Research Laboratory (AFRL) extended a research partnership to ROTC,
 Nanomaterials are materials that are made up of particles that are nanometers in size. This project enabled our researchers to collect, analyze, and interpret data related to the properties of nanomaterials. These properties included physical characteristics such as size, shape, and composition, as well as chemical and electrical properties. 
 
 Data was sourced from the sumplemental material of the article, ["Application of Bayesian networks in determining nanoparticle-induced cellular outcomes using transcriptomics"](https://www.tandfonline.com/doi/full/10.1080/17435390.2019.1595206). The data collected was used to create models of the materials and their properties. The results of this project can help improve our understanding of nanomaterials and their potential applications. Additionally, these models aided in predicting the behavior of nanomaterials in different contexts.
+
+
+
+
+## AFOSR, 2023 Summer
+
+
