@@ -1,6 +1,6 @@
 # AFRL, 2022-23 School Year
 
-<img src="Graphics/SPICELogo1.png" width="210" /> <img src="Graphics/cuh_logo.png" width="120" /> <img src="Graphics/afrl_transparent.png" width="120" />
+<img src="Graphics/SpiceLogo1.png" width="210" /> <img src="Graphics/cuh_logo.png" width="120" /> <img src="Graphics/afrl_transparent.png" width="120" />
 
 
 ## Background of the Partnership 
