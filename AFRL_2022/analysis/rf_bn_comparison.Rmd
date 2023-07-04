@@ -1,0 +1,624 @@
+---
+title: "Random Forest & Bayesian Network Comparison"
+author: "Armando Luna, Brittany Johnson, Connor Flynn"
+date: "2/3/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#load libraries
+if (!require(librarian)){
+  install.packages("librarian")
+  library(librarian)
+}
+
+librarian::shelf(here,
+readr,
+janitor,
+tidyr,
+tidyverse,
+plotly,
+randomForest,
+edarf,
+randomForestExplainer)
+
+```
+
+The purpose of this R Markdown is to utilize a random forest classification algorithm to demonstrate the most important factors in predicting whether a bioassay will be triggered or not
+
+
+Load in Data
+
+
+```{r}
+#Import data
+nmdata <- read_csv(here("data/Literature_transcriptomics_review_and_data_of_Nanoparticle_Induced_Cellular_Outcomes.csv"))
+
+```
+
+Clean Column Names
+
+
+```{r}
+nmdata <- nmdata %>% 
+  clean_names()
+```
+
+Replace "?" with NA Values
+
+
+```{r}
+nmdata[nmdata == "?"] <- NA
+```
+
+Drop microarray method transriptomics
+
+```{r}
+nmdata <- nmdata %>% 
+  select(-microarray_method_transcriptomics)
+```
+
+
+
+
+
+Identify numeric data
+```{r}
+nmdata$exposure_dose_mg_ml <- as.numeric(nmdata$exposure_dose_mg_ml)
+nmdata$exposure_duration_h <- as.numeric(nmdata$exposure_duration_h)
+```
+
+
+
+Omit rows with NA Values (Dataset goes from 244 observations to 178)
+
+```{r}
+nmdata_no_na <- na.omit(nmdata)
+```
+
+
+
+Convert response column (column model is guessing) to class factor
+```{r}
+#cell cycle and profileration 
+nmdata_no_na$cell_cycle_and_proliferation_responses <- as.factor(nmdata_no_na$cell_cycle_and_proliferation_responses)
+
+#cell death and aoptosis
+nmdata_no_na$cell_death_and_apoptosis_responses <- as.factor(nmdata_no_na$cell_death_and_apoptosis_responses)
+
+#dna damage and repair
+nmdata_no_na$dna_damage_and_repair_responses <- as.factor(nmdata_no_na$dna_damage_and_repair_responses)
+
+#cell adhesion and extracelluar matrix response
+nmdata_no_na$cell_adhesion_and_extracellular_matrix_responses <- as.factor(nmdata_no_na$cell_adhesion_and_extracellular_matrix_responses)
+
+#inflammation and immune responses
+nmdata_no_na$inflammation_and_immune_responses<- as.factor(nmdata_no_na$inflammation_and_immune_responses)
+
+#protein responses and endoplastimic reticulum er stress
+nmdata_no_na$unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress <- as.factor(nmdata_no_na$unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress)
+
+#metal ion responses
+nmdata_no_na$metal_ion_responses <- as.factor(nmdata_no_na$metal_ion_responses)
+
+#angio genesis responses
+nmdata_no_na$angiogenenesis_responses <- as.factor(nmdata_no_na$angiogenenesis_responses)
+
+#cytoskeleton organization responses
+nmdata_no_na$cytoskeleton_organization_responses<- as.factor(nmdata_no_na$cytoskeleton_organization_responses)
+
+
+```
+
+Subset Data
+
+```{r}
+cell_cycle_and_proliferation_responses_df <- nmdata_no_na %>% 
+  select(1:12)
+
+cell_death_and_apoptosis_responses_df <- nmdata_no_na %>% 
+  select(1:11, 13)
+
+dna_damage_and_repair_responses_df <- nmdata_no_na %>% 
+  select(1:11, 14)
+
+cell_adhesion_and_extracellular_matrix_responses_df <- nmdata_no_na %>% 
+  select(1:11, 15)
+
+inflammation_and_immune_responses_df <-  nmdata_no_na %>% 
+  select(1:11, 16)
+
+unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress_df <-
+  nmdata_no_na %>% 
+  select(1:11, 17)
+
+metal_ion_responses_df <- nmdata_no_na %>% 
+  select(1:11, 18)
+
+angiogenenesis_responses_df <- nmdata_no_na %>% 
+  select(1:11, 19)
+
+cytoskeleton_organization_responses_df <- nmdata_no_na %>% 
+  select(1:11, 20)
+
+```
+
+
+Create random forest model to predict triggered vs no effect 
+```{r}
+#Create random forest model to predict triggered vs no effect in cell_cycle_and_proliferation_responses
+
+rf_cell_cycle_and_proliferation_responses_limited <- randomForest(cell_cycle_and_proliferation_responses ~ ., 
+                       data = cell_cycle_and_proliferation_responses_df, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_cell_cycle_and_proliferation_responses_limited 
+
+```
+
+
+```{r}
+#Create random forest model to predict triggered vs no effect in cell_death_and_apoptosis_responses
+
+rf_cell_death_and_apoptosis_responses_limited <- randomForest(cell_death_and_apoptosis_responses ~ ., 
+                       data = cell_death_and_apoptosis_responses_df, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_cell_death_and_apoptosis_responses_limited
+
+```
+
+
+```{r}
+#Create random forest model to predict triggered vs no effect in dna_damage_and_repair_responses
+
+rf_dna_damage_and_repair_responses_limited <- randomForest(dna_damage_and_repair_responses ~ ., 
+                       data = dna_damage_and_repair_responses_df, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_dna_damage_and_repair_responses_limited
+
+```
+
+
+```{r}
+
+#Create random forest model to predict triggered vs no effect in cell_adhesion_and_extracellular_matrix_responses
+
+rf_cell_adhesion_and_extracellular_matrix_responses_limited <- randomForest(cell_adhesion_and_extracellular_matrix_responses ~ ., 
+                       data = cell_adhesion_and_extracellular_matrix_responses_df, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_cell_adhesion_and_extracellular_matrix_responses_limited
+
+```
+
+
+```{r}
+#Create random forest model to predict triggered vs no effect in inflammation_and_immune_responses
+
+rf_inflammation_and_immune_responses_limited <- randomForest(inflammation_and_immune_responses ~ ., 
+                       data = inflammation_and_immune_responses_df, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_inflammation_and_immune_responses_limited
+
+```
+
+
+```{r}
+#Create random forest model to predict triggered vs no effect in unfolded_protein_responses
+
+rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited <- randomForest(unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress ~ ., 
+                       data = unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress_df, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited
+
+
+```
+
+
+```{r}
+
+#Create random forest model to predict triggered vs no effect in metal_ion_responses
+
+rf_metal_ion_responses_limited <- randomForest(metal_ion_responses ~ ., 
+                       data = metal_ion_responses_df, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_metal_ion_responses_limited
+
+```
+
+
+
+```{r}
+
+#Create random forest model to predict triggered vs no effect in angiogenenesis_responses
+
+rf_angiogenenesis_responses_limited <- randomForest(angiogenenesis_responses ~ ., 
+                       data = angiogenenesis_responses_df, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_angiogenenesis_responses_limited
+```
+
+
+```{r}
+
+#Create random forest model to predict triggered vs no effect in cytoskeleton_organization_responses
+
+rf_cytoskeleton_organization_responses_limited <- randomForest(cytoskeleton_organization_responses ~ ., 
+                       data = cytoskeleton_organization_responses_df, 
+                       importance = TRUE,
+                       proximity = TRUE)
+
+rf_cytoskeleton_organization_responses_limited
+
+```
+
+
+Variables of Importance
+```{r}
+#cell cycle and proliferation variable of importances
+ImpData_rf_cell_cycle_and_proliferation_responses_limited <- as.data.frame(importance(rf_cell_cycle_and_proliferation_responses_limited))
+ImpData_rf_cell_cycle_and_proliferation_responses_limited$Var.Names <- row.names(ImpData_rf_cell_cycle_and_proliferation_responses_limited)
+
+ImpData_rf_cell_cycle_and_proliferation_responses_limited <- ImpData_rf_cell_cycle_and_proliferation_responses_limited %>% mutate(Var.Names = fct_reorder(Var.Names, .[['MeanDecreaseAccuracy']]))
+
+ggplot(ImpData_rf_cell_cycle_and_proliferation_responses_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+
+```{r}
+
+#cell_death_and_apoptosis_responses_limited variable of importances
+ImpData_rf_cell_death_and_apoptosis_responses_limited <- as.data.frame(importance(rf_cell_death_and_apoptosis_responses_limited))
+ImpData_rf_cell_death_and_apoptosis_responses_limited$Var.Names <- row.names(ImpData_rf_cell_death_and_apoptosis_responses_limited)
+
+ImpData_rf_cell_death_and_apoptosis_responses_limited <- ImpData_rf_cell_death_and_apoptosis_responses_limited %>% mutate(Var.Names = fct_reorder(Var.Names, .[['MeanDecreaseAccuracy']]))
+
+ggplot(ImpData_rf_cell_death_and_apoptosis_responses_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+
+```{r}
+
+#dna_damage_and_repair_responses_limited variable of importances
+ImpData_rf_dna_damage_and_repair_responses_limited <- as.data.frame(importance(rf_dna_damage_and_repair_responses_limited))
+ImpData_rf_dna_damage_and_repair_responses_limited$Var.Names <- row.names(ImpData_rf_dna_damage_and_repair_responses_limited)
+
+ImpData_rf_dna_damage_and_repair_responses_limited <- ImpData_rf_dna_damage_and_repair_responses_limited %>% mutate(Var.Names = fct_reorder(Var.Names, .[['MeanDecreaseAccuracy']]))
+
+ggplot(ImpData_rf_dna_damage_and_repair_responses_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+
+```{r}
+
+#cell_adhesion_and_extracellular_matrix_responses_limited variable of importances
+ImpData_rf_cell_adhesion_and_extracellular_matrix_responses_limited <- as.data.frame(importance(rf_cell_adhesion_and_extracellular_matrix_responses_limited))
+ImpData_rf_cell_adhesion_and_extracellular_matrix_responses_limited$Var.Names <- row.names(ImpData_rf_cell_adhesion_and_extracellular_matrix_responses_limited)
+
+ImpData_rf_cell_adhesion_and_extracellular_matrix_responses_limited <- ImpData_rf_cell_adhesion_and_extracellular_matrix_responses_limited %>% mutate(Var.Names = fct_reorder(Var.Names, .[['MeanDecreaseAccuracy']]))
+
+ggplot(ImpData_rf_cell_adhesion_and_extracellular_matrix_responses_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+
+```{r}
+
+#inflammation_and_immune_responses_limited variable of importances
+ImpData_rf_inflammation_and_immune_responses_limited <- as.data.frame(importance(rf_inflammation_and_immune_responses_limited))
+ImpData_rf_inflammation_and_immune_responses_limited$Var.Names <- row.names(ImpData_rf_inflammation_and_immune_responses_limited)
+
+ImpData_rf_inflammation_and_immune_responses_limited <- ImpData_rf_inflammation_and_immune_responses_limited %>% mutate(Var.Names = fct_reorder(Var.Names, .[['MeanDecreaseAccuracy']]))
+
+ggplot(ImpData_rf_inflammation_and_immune_responses_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+
+```{r}
+
+#unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited variable of importances
+ImpData_rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited <- as.data.frame(importance(rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited))
+ImpData_rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited$Var.Names <- row.names(ImpData_rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited)
+
+ImpData_rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited <- ImpData_rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited %>% mutate(Var.Names = fct_reorder(Var.Names, .[['MeanDecreaseAccuracy']]))
+
+ggplot(ImpData_rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+
+
+```{r}
+
+#metal_ion_responses_limited variable of importances
+ImpData_rf_metal_ion_responses_limited <- as.data.frame(importance(rf_metal_ion_responses_limited))
+ImpData_rf_metal_ion_responses_limited$Var.Names <- row.names(ImpData_rf_metal_ion_responses_limited)
+
+ImpData_rf_metal_ion_responses_limited <- ImpData_rf_metal_ion_responses_limited %>% mutate(Var.Names = fct_reorder(Var.Names, .[['MeanDecreaseAccuracy']]))
+
+ggplot(ImpData_rf_metal_ion_responses_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+```{r}
+
+#angiogenenesis_responses_limited variable of importances
+ImpData_rf_angiogenenesis_responses_limited <- as.data.frame(importance(rf_angiogenenesis_responses_limited))
+ImpData_rf_angiogenenesis_responses_limited$Var.Names <- row.names(ImpData_rf_angiogenenesis_responses_limited)
+
+ImpData_rf_angiogenenesis_responses_limited <- ImpData_rf_angiogenenesis_responses_limited %>% mutate(Var.Names = fct_reorder(Var.Names, .[['MeanDecreaseAccuracy']]))
+
+ggplot(ImpData_rf_angiogenenesis_responses_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+
+```{r}
+
+#cytoskeleton_organization_responses_limited variable of importances
+ImpData_rf_cytoskeleton_organization_responses_limited <- as.data.frame(importance(rf_cytoskeleton_organization_responses_limited
+))
+ImpData_rf_cytoskeleton_organization_responses_limited$Var.Names <- row.names(ImpData_rf_cytoskeleton_organization_responses_limited)
+
+ImpData_rf_cytoskeleton_organization_responses_limited<- ImpData_rf_cytoskeleton_organization_responses_limited %>% mutate(Var.Names = fct_reorder(Var.Names, .[['MeanDecreaseAccuracy']]))
+
+ggplot(ImpData_rf_cytoskeleton_organization_responses_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+
+
+Add column to join data
+```{r}
+
+#add assay column to be able to join data
+ImpData_rf_metal_ion_responses_limited$assay = "metal_ion_responses"
+ImpData_rf_inflammation_and_immune_responses_limited$assay = "inflammation_and_immune_responses"
+#ImpData_rf_dna_damage_and_repair_responses_limited$assay = "dna_damage_and_repair_responses"
+#ImpData_rf_cytoskeleton_organization_responses_limited$assay = "cytoskeleton_organization_responses"
+ImpData_rf_cell_adhesion_and_extracellular_matrix_responses_limited$assay = "cell_adhesion_and_extracellular_matrix_responses"
+ImpData_rf_cell_death_and_apoptosis_responses_limited$assay = "cell_death_and_apoptosis_responses"
+ImpData_rf_cell_cycle_and_proliferation_responses_limited$assay = "cell_cycle_and_proliferation_responses"
+ImpData_rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited$assay = "unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress"
+
+```
+
+
+Facet Wrap Plots
+```{r}
+
+#combine all data
+df_list_limited <- list(ImpData_rf_metal_ion_responses_limited,
+             ImpData_rf_inflammation_and_immune_responses_limited, 
+             #ImpData_rf_dna_damage_and_repair_responses_limited,
+            # ImpData_rf_cytoskeleton_organization_responses_limited,
+             ImpData_rf_cell_adhesion_and_extracellular_matrix_responses_limited,
+             ImpData_rf_cell_death_and_apoptosis_responses_limited,
+             ImpData_rf_cell_cycle_and_proliferation_responses_limited,
+             ImpData_rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited)
+
+```
+
+
+```{r}
+
+all_data_limited <- all_data <- Reduce(function(x, y) merge(x, y, all=TRUE), df_list_limited, accumulate=FALSE)
+
+```
+
+
+```{r}
+plot <- ggplot(all_data_limited, aes(x=Var.Names, y=`MeanDecreaseAccuracy`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`MeanDecreaseAccuracy`), color="skyblue") +
+  geom_point(aes(size = MeanDecreaseGini), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+  facet_wrap(~assay)
+
+plot
+
+
+```
+
+
+
+
+```{r}
+plot_predict_interaction(rf_metal_ion_responses_limited, nmdata_no_na, "exposure_dose_mg_ml", "zeta_potential_m_v")
+
+```
+
+
+```{r}
+exposure <- as.data.frame(table(nmdata_no_na$exposure_dose_mg_ml))
+exposure
+```
+
+```{r}
+
+```
+
+Random Forest Explainer
+
+Cell Cycle and proliferation
+
+```{r}
+#explain_forest(rf_cell_cycle_and_proliferation_responses_limited, interactions = TRUE, data = nmdata_no_na, path = here("random_forests_limited_explained/cell_cycle_and_proliferation_explained.html"))
+```
+
+
+
+```{r}
+plot_predict_interaction(rf_cell_cycle_and_proliferation_responses_limited, nmdata_no_na, "exposure_dose_mg_ml", "zeta_potential_m_v")
+```
+
+
+
+
+Can't seem to find another continuous variable that is important with zeta potential regarding prediction interaction
+
+Metal Ion Responses
+
+```{r}
+#explain_forest(rf_metal_ion_responses_limited, interactions = TRUE, data = nmdata_no_na, path = here("random_forests_limited_explained/metal_ion_explained.html"))
+```
+
+
+```{r}
+plot_predict_interaction(rf_cell_cycle_and_proliferation_responses_limited, nmdata_no_na, "exposure_dose_mg_ml", "zeta_potential_m_v")
+```
+
+Cell Adhesion and Extra cellular Matrix Responses
+
+```{r}
+#explain_forest(rf_cell_adhesion_and_extracellular_matrix_responses_limited, interactions = TRUE, data = nmdata_no_na, path = here("random_forests_limited_explained/cell_adhesion_and_extracellular_matrix_explained.html"))
+```
+
+```{r}
+plot_predict_interaction(rf_cell_adhesion_and_extracellular_matrix_responses_limited, nmdata_no_na, "zeta_potential_m_v", "exposure_duration_h")
+```
+
+Cell Death and Apoptosis Responses
+
+```{r}
+#explain_forest(rf_cell_death_and_apoptosis_responses_limited, interactions = TRUE, data = nmdata_no_na, path = here("random_forests_limited_explained/cell_death_and_apoptosis_explained.html"))
+```
+
+```{r}
+plot_predict_interaction(rf_cell_death_and_apoptosis_responses_limited, nmdata_no_na, "exposure_dose_mg_ml", "zeta_potential_m_v")
+```
+
+Inflammation and Immune Responses
+
+```{r}
+#explain_forest(rf_inflammation_and_immune_responses_limited, interactions = TRUE, data = nmdata_no_na, path = here("random_forests_limited_explained/inflammation_and_immune_explained.html"))
+```
+
+```{r}
+plot_predict_interaction(rf_inflammation_and_immune_responses_limited, nmdata_no_na, "exposure_dose_mg_ml", "zeta_potential_m_v")
+```
+
+
+
+Unfolded Protein and Endoplasmatic Reticulum Stress
+
+```{r}
+#explain_forest(rf_unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress__responses_limited, interactions = TRUE, data = nmdata_no_na, path = here("random_forests_limited_explained/unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress_explained.html"))
+```
+

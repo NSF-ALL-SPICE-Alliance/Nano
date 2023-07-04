@@ -1,0 +1,75 @@
+---
+title: "Sankey Plot"
+author: "AJ Luna"
+date: "2023-05-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#Load libraries
+library(networkD3) #sanky plot library from R gallery 
+library(dplyr) 
+
+```
+
+
+```{r}
+
+#clean and filter data for the Sankey plot
+sankey_data <- nmdata_longer %>%
+  mutate(effects = ifelse(effects == "triggered", "Triggered", "Not Triggered")) %>%
+  count(nanoparticles, responses, effects) %>%
+  rename(value = n)
+
+
+
+```
+
+
+```{r}
+#plot using networkD3 
+links <- sankey_data
+nodes <- data.frame(name = c(as.character(links$nanoparticles),
+                             as.character(links$responses),
+                             as.character(links$effects)) %>% unique())
+
+
+```
+
+```{r}
+
+#link  nanoparticle to responses triggered or not triggered
+links$source <- match(links$nanoparticles, nodes$name) - 1
+links$target <- match(links$responses, nodes$name) - 1
+
+
+```
+
+
+```{r}
+
+#add new links from responses to effects
+links2 <- sankey_data
+links2$source <- match(links2$responses, nodes$name) - 1
+links2$target <- match(links2$effects, nodes$name) - 1
+links <- rbind(links, links2)
+
+
+```
+
+
+```{r}
+
+#plot, expand for better view
+sankey_plot <- sankeyNetwork(Links = links, Nodes = nodes,
+                             Source = "source", Target = "target",
+                             Value = "value", NodeID = "name",
+                             sinksRight = TRUE,
+                             fontSize = 12, nodeWidth = 30)
+
+sankey_plot
+
+```
+

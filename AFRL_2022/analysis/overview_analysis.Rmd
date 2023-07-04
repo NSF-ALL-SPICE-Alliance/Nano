@@ -1,0 +1,424 @@
+---
+title: "Overview Analysis"
+author: "Armando Luna, Brittany Johnson, Connor Flynn"
+date: "12/8/2022"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(here)
+library(readr)
+library(janitor)
+library(tidyr)
+library(tidyverse)
+library(plotly)
+library(RColorBrewer)
+library(dplyr)
+library(forcats)
+library(hrbrthemes)
+library(viridis)
+library(paletteer)
+
+options(scipen = 99)
+
+```
+
+The purpose of this R Markdown is to perform a preliminary, overview analysis of the dataset from "Application of Bayesian networks in determining nanoparticle-induced cellular outcomes using transcriptomics". 
+
+
+Import Data
+
+
+```{r}
+nmdata <- read_csv(here("data/Literature_transcriptomics_review_and_data_of_Nanoparticle_Induced_Cellular_Outcomes.csv"))
+```
+
+Clean Column Names
+
+```{r}
+nmdata <- nmdata %>% 
+  clean_names()
+```
+
+Replace Column Names with Abbreviations
+
+```{r}
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "unfolded_protein_responses_upr_and_endoplasmatic_reticulum_er_stress", 
+                                        replacement = "UPR_ER_Stress")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "angiogenenesis_responses", 
+                                        replacement = "Angiogenesis")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "metal_ion_responses", 
+                                        replacement = "Metal_Ion")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "inflammation_and_immune_responses", 
+                                        replacement = "Inflammation_Immune")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cell_adhesion_and_extracellular_matrix_responses", 
+                                        replacement = "Cell_Adhesion_ECM")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "dna_damage_and_repair_responses", 
+                                        replacement = "DNA_Damage_Repair")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cell_death_and_apoptosis_responses", 
+                                        replacement = "Cell_Death_Apoptosis")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cell_cycle_and_proliferation_responses", 
+                                        replacement = "Cell_Cycle_and_Proliferation")
+
+names(nmdata) <- gsub(x = names(nmdata), 
+                                        pattern = "cytoskeleton_organization_responses", 
+                                        replacement = "Cytoskeleton_Organization")
+
+
+  
+```
+
+Replace Nanoparticles with Abbreviations
+
+```{r}
+nmdata[nmdata == "Ag_NPs"] <- "Ag"
+nmdata[nmdata == "Au_NPs"] <- "Au"
+
+nmdata[nmdata == "CuO_NPs"] <- "CuO"
+nmdata[nmdata == "Fe2O3_NPs"] <- "Fe203"
+nmdata[nmdata == "Polymeric_NPs"] <- "Polymeric"
+nmdata[nmdata == "Polystyrene_NPs"] <- "Polystyrene"
+nmdata[nmdata == "TiO2_NPs"] <- "TiO2"
+nmdata[nmdata == "ZnO_NPs"] <- "ZnO"
+```
+
+
+
+
+
+Select Nanoparticle and Bioassay Columns
+
+```{r}
+nmdata_longer <- nmdata %>% 
+  select(nanoparticles, Cell_Cycle_and_Proliferation, Cell_Death_Apoptosis, DNA_Damage_Repair, Cell_Adhesion_ECM, Inflammation_Immune, UPR_ER_Stress, Metal_Ion, Angiogenesis, Cytoskeleton_Organization)
+```
+
+
+Pivot Data Longer to have 1 response column
+
+```{r}
+nmdata_longer <- nmdata_longer %>% 
+  tidyr::pivot_longer(cols = !nanoparticles, names_to = "responses", 
+               values_to = "effects")
+```
+
+Remove undercores from resposes and effects for visualization cleanliness
+
+```{r}
+nmdata_longer  <- nmdata_longer %>%
+  mutate(responses = gsub("_", " ", responses),
+         effects = gsub("_", " ", effects))
+```
+
+
+Group By Responses and Effects and Count 
+
+```{r}
+nmdata_longer_responses <- nmdata_longer %>% 
+  group_by(responses, effects) %>% 
+  count()
+```
+
+
+
+
+Plot Responses and Effects Count
+
+
+```{r}
+ggplot(data = nmdata_longer_responses, aes(fill = effects, y=n, x=responses)) + 
+    geom_bar(position="dodge", stat="identity") + 
+  coord_flip() + 
+  theme_minimal() +
+  scale_fill_brewer(palette = "Dark2", direction = -1)
+```
+
+
+Group by Nanoparticles and Effects and Count 
+
+```{r}
+nmdata_longer_nanoparticles <- nmdata_longer %>% 
+  group_by(nanoparticles, effects) %>% 
+  count()
+```
+
+
+Plot Nanoparticles and Effects Count
+
+```{r}
+ggplot(data = nmdata_longer_nanoparticles, aes(fill = effects, y=n, x=nanoparticles)) + 
+    geom_bar(position="dodge", stat="identity") + 
+  coord_flip() + 
+  theme_minimal() +
+    scale_fill_brewer(palette = "Dark2", direction = -1)
+```
+
+Group by Nanoparticles, Responses, and Effects and Count
+
+```{r}
+nmdata_longer_nanoparticles_effects <- nmdata_longer %>% 
+  group_by(nanoparticles, responses, effects) %>% 
+  count()
+```
+
+
+Plot Nanoparticles, Responses, and Effects Count
+
+```{r}
+ggplot(data = nmdata_longer_nanoparticles_effects,                
+       aes(x = n,
+           y = responses,
+           fill = nanoparticles)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_grid(~ effects) + 
+  #coord_flip() + 
+  theme_minimal() +
+  scale_fill_brewer(palette="Set3") 
+
+```
+
+```{r}
+nmdata_longer_all <- nmdata %>% 
+  tidyr::pivot_longer(cols = c(Cell_Cycle_and_Proliferation:Cytoskeleton_Organization), names_to = "responses", 
+               values_to = "effects")
+```
+
+```{r}
+nmdata_longer_all  <- nmdata_longer_all %>%
+  mutate(responses = gsub("_", " ", responses),
+         effects = gsub("_", " ", effects))
+```
+
+```{r}
+nmdata_longer_cell_type_effects <- nmdata_longer_all %>% 
+  group_by(cell_type, responses, effects) %>% 
+  count()
+```
+
+Plot by Cell Type
+
+```{r}
+ggplot(data = nmdata_longer_cell_type_effects,                         # Draw barplot with grouping & stacking
+       aes(x = n,
+           y = responses,
+           fill = cell_type)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_grid(~ effects) + 
+  #coord_flip() + 
+  theme_minimal() +
+  scale_fill_brewer(palette="Set3") 
+
+```
+
+```{r}
+nmdata_longer_tissue_effects <- nmdata_longer_all %>% 
+  group_by(tissue, responses, effects) %>% 
+  count()
+```
+
+
+Plot by Tissue
+
+```{r}
+ggplot(data = nmdata_longer_tissue_effects,                         # Draw barplot with grouping & stacking
+       aes(x = n,
+           y = responses,
+           fill = tissue)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_grid(~ effects) + 
+  #coord_flip() + 
+  theme_minimal() +
+  scale_fill_paletteer_d("colorBlindness::Blue2DarkOrange12Steps")
+
+```
+```{r}
+ggplot(data = nmdata_longer_tissue_effects,                         # Draw barplot with grouping & stacking
+       aes(x = n,
+           y = tissue,
+           fill = effects)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_wrap(~ responses) + 
+  #coord_flip() + 
+  theme_minimal() +
+    scale_fill_brewer(palette = "Dark2", direction = -1) 
+
+```
+
+Plot by Surface Coatings
+
+
+```{r}
+nmdata_longer_surface_coatings_effects <- nmdata_longer_all %>% 
+  group_by(surface_coatings, responses, effects) %>% 
+  count()
+```
+
+
+```{r}
+ggplot(data = nmdata_longer_surface_coatings_effects,                         # Draw barplot with grouping & stacking
+       aes(x = n,
+           y = surface_coatings,
+           fill = effects)) + 
+  geom_bar(stat = "identity",
+           position = "stack") +
+  facet_grid(~ responses) + 
+  #coord_flip() + 
+  theme_minimal() +
+  scale_fill_brewer(palette = "Dark2", direction = -1) 
+
+```
+
+
+
+Violin Plot
+
+Select Columns of Interest
+
+```{r}
+nmdata_longer_dose_duration <- nmdata %>% 
+  select(nanoparticles, UPR_ER_Stress, Angiogenesis, Metal_Ion, Inflammation_Immune, Cell_Adhesion_ECM, DNA_Damage_Repair, Cell_Death_Apoptosis, Cell_Cycle_and_Proliferation, Cytoskeleton_Organization, exposure_dose_mg_ml, exposure_duration_h)
+```
+
+Pivot Data Longer to have 1 response column
+
+```{r}
+nmdata_longer_dose_duration <- nmdata_longer_dose_duration %>% 
+  tidyr::pivot_longer(cols = (UPR_ER_Stress: Cytoskeleton_Organization), 
+                      names_to = "responses", 
+               values_to = "effects")
+```
+
+
+Change Exposure dose to numeric class
+
+```{r}
+nmdata_longer_dose_duration$exposure_dose_mg_ml <- as.numeric(nmdata_longer_dose_duration$exposure_dose_mg_ml)
+```
+
+Plot Violin Plot
+
+*** NOT a great way tp visualize the Data
+
+
+```{r, warning=FALSE}
+ggplot(data = nmdata_longer_dose_duration, aes(fill=effects, y=exposure_dose_mg_ml, x=responses)) + 
+    geom_violin(position="dodge", alpha=0.5, outlier.colour="transparent") +
+    scale_fill_viridis(discrete=T, name="") +
+    theme_ipsum()  +
+    xlab("Bioassay") +
+    ylab("exposure dose mg/mL") +
+    ggtitle("Influence of Nanoparticle Dose on Bioassay Outcome up to 30 mg/mL") +
+  theme(plot.title = element_text(size = 10, hjust = 0.5)) +
+    ylim(0,30) +
+  coord_flip() 
+```
+Add Duration
+
+
+
+```{r}
+ggplot(data = nmdata_longer_dose_duration, aes(x = exposure_duration_h, y = exposure_dose_mg_ml, color = effects)) +
+  geom_point()
+```
+```{r}
+
+```
+
+
+
+```{r}
+ggplot(data = nmdata_longer_dose_duration, aes(x = exposure_duration_h,
+                                               y = exposure_dose_mg_ml,
+                                               color = nanoparticles)) +
+  geom_point() +
+  facet_wrap(~effects + responses) 
+```
+
+
+```{r}
+nmdata_longer_dose_duration_metal_ion <- nmdata_longer_dose_duration %>% 
+  filter(responses == "Metal_Ion")
+```
+
+
+```{r}
+plot <- ggplot(data = nmdata_longer_dose_duration_metal_ion, aes(x = exposure_duration_h,
+                                               y = exposure_dose_mg_ml,
+                                               color = nanoparticles)) +
+  geom_point() +
+  facet_wrap(~effects + responses) 
+```
+
+```{r}
+ggplotly(plot)
+```
+
+
+```{r}
+nm_data_long_response <- nmdata %>% 
+  pivot_longer(cols = Cell_Cycle_and_Proliferation:Cytoskeleton_Organization, names_to = "assay", values_to = "response")
+```
+
+```{r}
+# interests <- nm_data_long_response %>%
+#   group_by(nanoparticles, assay, exposure_dose_mg_ml, exposure_duration_h) %>%
+#   filter(n_distinct(response) > 1) %>%
+#   ungroup()
+```
+
+```{r}
+# nm_data_long_response_low_exposure <- nm_data_long_response %>% 
+#   filter(exposure_dose_mg_ml <= 1)
+```
+
+```{r}
+nm_data_long_response$exposure_dose_mg_ml <- as.factor(nm_data_long_response$exposure_dose_mg_ml)
+```
+
+
+
+```{r}
+nm_data_long_response$exposure_dose_mg_ml <- factor(nm_data_long_response$exposure_dose_mg_ml,
+                                                   levels = c(0.2, 1, 2.5, 3, 5, 10, 12, 20, 25,
+                                                              30, 40, 50, 60, 75, 100, 150, 200,
+                                                              400, 1000))
+```
+
+```{r}
+ggplot(data = nm_data_long_response, aes(x = exposure_dose_mg_ml,
+                                         
+                                         fill = response)) +
+  geom_bar(stat = "count", position = "dodge", color="black") +
+  facet_wrap(~assay)+
+  theme_minimal()
+  
+```
+
+
+
+
+

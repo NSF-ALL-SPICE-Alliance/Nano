@@ -1,0 +1,245 @@
+﻿Nanoparticles,Core size (nm),Shape,Surface  coatings,Zeta Potential (mV),Specific surface area (m2/g) ,Exposure  dose (μg/ml),Exposure duration  (h),Tissue,Cell type,Cell line,Microarray Method_Transcriptomics,Cell  cycle  and  Proliferation  responses,Cell  death  and  Apoptosis responses,DNA  damage  and  Repair  responses,Cell  adhesion  and Extracellular  matrix  responses,Inflammation and Immune responses,Unfolded protein responses (UPR) and Endoplasmatic reticulum (ER) stress,Metal Ion  Responses,Angiogenenesis responses,Cytoskeleton organization responses
+CoFe2O4,50,?,Silica,?,?,100,12,Kidney,Cancer,293T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+CoFe2O4,50,?,Silica,?,?,1000,12,Kidney,Cancer,293T,Genechip_Affymetrix,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect,no_effect,triggered
+CuO_NPs,36,Spherical,none,21,13.3,75,24,Brain,Cancer,SH-SY5Y,Genechip_Affymetrix,triggered,triggered,triggered,triggered,triggered,no_effect,triggered,no_effect,triggered
+CuO_NPs,50,Unknown,none,-24,?,25,24,Lung,Cancer,A549,WHG_Agilent,triggered,triggered,no_effect,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+Au_NPs,5,Spherical,Citrate,-14,62.11,60,72,Intestinal,Cancer,CACO-2,WHG_Agilent,no_effect,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+Au_NPs,5,Spherical,Citrate,-14,62.11,20,72,Intestinal,Cancer,CACO-2,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+Au_NPs,5,Spherical,Citrate,-14,62.11,60,24,Intestinal,Cancer,CACO-2,WHG_Agilent,no_effect,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+Au_NPs,5,Spherical,Citrate,-14,62.11,20,24,Intestinal,Cancer,CACO-2,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+Au_NPs,32,Spherical,Citrate,-14,10.35,20,72,Intestinal,Cancer,CACO-2,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,triggered
+Au_NPs,32,Spherical,Citrate,-14,10.35,60,24,Intestinal,Cancer,CACO-2,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,triggered
+Au_NPs,32,Spherical,Citrate,-19,10.35,20,24,Dermal,Normal,HDF,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+Au_NPs,35,Spherical,PAH,17,15.53,20,24,Dermal,Normal,HDF,WHG_Agilent,triggered,triggered,triggered,triggered,triggered,no_effect,triggered,triggered,no_effect
+Au_NPs,163,Spherical,Lipid_bilayer,-49,15.53,20,24,Dermal,Normal,HDF,WHG_Agilent,triggered,triggered,triggered,triggered,triggered,no_effect,triggered,triggered,no_effect
+Au_NPs,38,Spherical,Hybrid_lipid,-52,15.53,20,24,Dermal,Normal,HDF,WHG_Agilent,no_effect,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect,no_effect
+Au_NPs,32,Spherical,Citrate,-19,10.35,200,48,Prostate,Cancer,PC3,WHG_Agilent,no_effect,no_effect,no_effect,triggered,triggered,no_effect,triggered,triggered,no_effect
+Au_NPs,35,Spherical,PAH,17,15.53,200,48,Prostate,Cancer,PC3,WHG_Agilent,triggered,no_effect,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Au_NPs,163,Spherical,Lipid_bilayer,-49,15.53,200,48,Prostate,Cancer,PC3,WHG_Agilent,no_effect,triggered,no_effect,no_effect,triggered,no_effect,no_effect,triggered,no_effect
+Au_NPs,38,Spherical,Hybrid_lipid,-52,15.53,200,48,Prostate,Cancer,PC3,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,triggered,no_effect,no_effect,triggered,no_effect
+Au_NPs,20,Spherical,none,?,15.53,40,1,Dermal,Normal,HDF,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect,triggered
+Au_NPs,20,Spherical,none,?,15.53,40,4,Dermal,Normal,HDF,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect,triggered
+Au_NPs,20,Spherical,none,?,15.53,40,8,Dermal,Normal,HDF,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect,triggered
+Fe2O3_NPs,11,Spherical,DMSA,-23,69.04,50,24,Blood,Cancer,THP-1,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Fe2O3_NPs,11,Spherical,DMSA,-23,69.04,100,24,Blood,Cancer,THP-1,Genechip_Affymetrix,no_effect,triggered,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Fe2O3_NPs,11,Spherical,DMSA,-23,69.04,50,24,Liver,Cancer,HEPG2,Genechip_Affymetrix,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect,no_effect
+Fe2O3_NPs,11,Spherical,DMSA,-23,69.04,100,24,Liver,Cancer,HEPG2,Genechip_Affymetrix,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,30,nanotube array,?,?,51.28,?,24,Blood,Normal,VSMC,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,100,nanotube array,?,?,15.38,?,24,Blood,Normal,VSMC,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,30,nanotube array,?,?,51.28,?,24,muscle,Normal,VSMC,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,1,6,Blood,Normal,HMDM,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,1,6,Blood,Cancer,JURKAT-T,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,1,6,Blood,Normal,MDDC,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,1,24,Blood,Normal,HMDM,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,1,24,Blood,Cancer,JURKAT-T,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,1,24,Blood,Normal,MDDC,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,10,6,Blood,Normal,HMDM,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,10,6,Blood,Cancer,JURKAT-T,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,10,6,Blood,Normal,MDDC,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,10,24,Blood,Normal,HMDM,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,10,24,Blood,Cancer,JURKAT-T,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,no_effect,no_effect
+TiO2_NPs,31,nanotube,none,-14,49.63,10,24,Blood,Normal,MDDC,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,no_effect,no_effect
+ZnO_NPs,20,Spherical,Citrate,-40,?,40,24,Dermal,Normal,HACAT,WHG_Agilent,triggered,triggered,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,1,6,Blood,?,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,1,6,?,?,?,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,1,6,Blood,?,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,10,6,Blood,?,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,10,6,?,?,?,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,10,6,Blood,?,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,1,24,Blood,?,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,1,24,?,?,?,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,1,24,Blood,?,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,10,24,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,10,24,?,?,?,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,none,-24,71.35,10,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,1,6,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,1,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,1,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,10,6,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,10,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,10,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,1,24,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,1,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,1,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,10,24,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,10,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,12,Spherical,Mandelic acid,-10,89.19,10,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,1,6,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,1,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,1,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,10,6,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,10,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,10,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,1,24,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,1,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,1,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,10,24,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,10,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,15,Spherical,mercaptopropyl trimethoxysilane,-22,97.3,10,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,1,6,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,1,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,1,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,10,6,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,10,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,10,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,1,24,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,1,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,1,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,10,24,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,10,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,8,Ellipsoid,Methoxyl,-18,133.79,10,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,1,6,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,1,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,1,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,10,6,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,10,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,10,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,1,24,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,1,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,1,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,10,24,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,10,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Clusters,Diethyl glyc,19,214.06,10,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,1,6,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,1,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,1,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,10,6,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,10,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,10,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,1,24,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,1,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,1,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,10,24,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,10,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,13,Ellipsoid,Mandelic acid,-9,82.33,10,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,1,6,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,1,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,1,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,10,6,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,10,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,10,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,1,24,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,1,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,1,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,10,24,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,10,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,5,Spherical,Gluconic acid,24,214.06,10,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,1,6,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,1,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,1,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,10,6,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,10,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,10,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,1,24,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,1,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,1,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,10,24,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,10,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,35,Spherical,Citric acid,-6,30.58,10,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,1,6,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,1,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,1,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,10,6,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,10,6,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,10,6,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,1,24,Blood,Normal,HMDM,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,1,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,1,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,10,24,Blood,Normal,HMDM,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,10,24,Blood,Normal,MDDC,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,40,nanotube,folic acid,-32,26.76,10,24,Blood,Cancer,JURKAT-T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect
+Ag_NPs,20,Spherical,none,?,28.57,5,4,Intestinal,Cancer,CACO-2,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,20,Spherical,none,?,28.57,25,4,Intestinal,Cancer,CACO-2,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,34,Spherical,none,?,16.81,5,4,Intestinal,Cancer,CACO-2,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,34,Spherical,none,?,16.81,25,4,Intestinal,Cancer,CACO-2,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,61,Spherical,none,?,9.37,5,4,Intestinal,Cancer,CACO-2,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,61,Spherical,none,?,9.37,25,4,Intestinal,Cancer,CACO-2,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,113,Spherical,none,?,5.06,5,4,Intestinal,Cancer,CACO-2,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,113,Spherical,none,?,5.06,25,4,Intestinal,Cancer,CACO-2,WHG_Agilent,triggered,triggered,no_effect,triggered,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,8.5,Spherical,polyethylenimine,?,67.23,1,24,Liver,Cancer,HEPG2,Genechip_Affymetrix,triggered,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,20,Spherical,Citrate,41.8,28.57,25,6,Intestinal,Cancer,CACO-2,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,20,Spherical,Citrate,41.8,28.57,25,24,Intestinal,Cancer,CACO-2,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,34,Spherical,Citrate,41.7,16.81,25,6,Intestinal,Cancer,CACO-2,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,34,Spherical,Citrate,41.7,16.81,25,24,Intestinal,Cancer,CACO-2,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,61,Spherical,Citrate,41.4,9.37,25,6,Intestinal,Cancer,CACO-2,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,61,Spherical,Citrate,41.4,9.37,25,24,Intestinal,Cancer,CACO-2,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,113,Spherical,Citrate,47,5.06,25,24,Intestinal,Cancer,CACO-2,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,113,Spherical,Citrate,47,5.06,25,6,Intestinal,Cancer,CACO-2,Beadchip_Illumina,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,20,Spherical,Citrate,41.8,28.57,25,6,Breast,Cancer,MCF-7,Beadchip_Illumina,triggered,no_effect,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,20,Spherical,Citrate,41.8,28.57,25,24,Breast,Cancer,MCF-7,Beadchip_Illumina,triggered,no_effect,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,34,Spherical,Citrate,41.7,16.81,25,6,Breast,Cancer,MCF-7,Beadchip_Illumina,triggered,no_effect,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,34,Spherical,Citrate,41.7,16.81,25,24,Breast,Cancer,MCF-7,Beadchip_Illumina,triggered,no_effect,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,61,Spherical,Citrate,41.4,9.37,25,6,Breast,Cancer,MCF-7,Beadchip_Illumina,triggered,no_effect,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,61,Spherical,Citrate,41.4,9.37,25,24,Breast,Cancer,MCF-7,Beadchip_Illumina,triggered,no_effect,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,113,Spherical,Citrate,47,5.06,25,6,Breast,Cancer,MCF-7,Beadchip_Illumina,triggered,no_effect,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,113,Spherical,Citrate,47,5.06,25,24,Breast,Cancer,MCF-7,Beadchip_Illumina,triggered,no_effect,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,13,Spherical,starch,-2,43.96,400,48,Lung,Normal,IMR-90,Superarray_Bioscience,triggered,no_effect,triggered,no_effect,no_effect,no_effect,triggered,no_effect,no_effect
+Ag_NPs,13,Spherical,starch,-2,43.96,400,48,Brain,Cancer,U251,Superarray_Bioscience,triggered,triggered,triggered,triggered,no_effect,no_effect,triggered,no_effect,no_effect
+Ag_NPs,20,Spherical,Citrate,41.8,28.57,3,4,Liver,Cancer,HEPG2,Genechip_Affymetrix,triggered,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,20,Spherical,Citrate,41.8,28.57,3,24,Liver,Cancer,HEPG2,Genechip_Affymetrix,triggered,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,50,Spherical,Citrate,41.5,11.43,3,4,Liver,Cancer,HEPG2,Genechip_Affymetrix,triggered,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,50,Spherical,Citrate,41.5,11.43,3,24,Liver,Cancer,HEPG2,Genechip_Affymetrix,triggered,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,6.5,?,none,?,87.91,30,24,Cervix,Cancer,HELA,WHG_Agilent,triggered,triggered,triggered,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,6.5,?,none,?,87.91,30,48,Cervix,Cancer,HELA,WHG_Agilent,triggered,triggered,triggered,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,16,Spherical,colloidal,-22,25,12,24,Lung,Cancer,A549,Genechip_Affymetrix,triggered,no_effect,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,16,Spherical,colloidal,-22,25,12,48,Lung,Cancer,A549,Genechip_Affymetrix,triggered,no_effect,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+Ag_NPs,99,?,none,?,5.77,0.2,24,Blood,Cancer,JURKAT-T ,Beadchip_Illumina,triggered,triggered,triggered,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Polymeric_NPs,65,?,polymeric,51,310,25,24,Breast,Normal,HMEC 184,WHG_Agilent,triggered,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect,no_effect
+Polystyrene_NPs,15,?,none,-16,?,100,24,Liver,Cancer,HEPG2,WHG_Agilent,triggered,triggered,triggered,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Polystyrene_NPs,15,?,none,-8,?,100,24,Liver,Cancer,HEPG2,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Polystyrene_NPs,29,?,carboxyl,-13,?,150,6,Blood,Cancer,EAHY926,Genechip_Affymetrix,triggered,triggered,triggered,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Polystyrene_NPs,29,?,carboxyl,-13,?,200,6,Blood,Cancer,EAHY926,Genechip_Affymetrix,triggered,triggered,triggered,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Polystyrene_NPs,29,?,carboxyl,-12,?,200,6,Blood,Cancer,EAHY926,Genechip_Affymetrix,triggered,triggered,triggered,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Polystyrene_NPs,20,?,none,-37,?,10,6,Blood,Cancer,EAHY926,Genechip_Affymetrix,no_effect,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect
+Polystyrene_NPs,20,?,none,-37,28.57,200,24,Blood,Cancer,EAHY926,Genechip_Affymetrix,triggered,triggered,triggered,no_effect,triggered,triggered,no_effect,no_effect,no_effect
+Polystyrene_NPs,212,?,carboxyl,-11,28.57,150,6,Blood,Cancer,EAHY926,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+Polystyrene_NPs,212,?,carboxyl,-11,28.57,200,6,Blood,Cancer,EAHY926,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+Polystyrene_NPs,230,?,carboxyl,-10,28.57,200,6,Blood,Cancer,EAHY926,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+Polystyrene_NPs,230,?,none,-42,28.57,10,6,Blood,Cancer,EAHY926,Genechip_Affymetrix,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,634,nanotube,?,-10,18,100,1,Blood,Cancer,THP-1,Genechip_Affymetrix,triggered,triggered,triggered,triggered,triggered,no_effect,no_effect,triggered,no_effect
+TiO2_NPs,634,nanotube,?,-10,18,10,24,Intestinal,Cancer,CACO-2,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,no_effect
+TiO2_NPs,634,nanotube,?,-10,18,10,24,Lung,Normal,SAE,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,triggered
+TiO2_NPs,634,nanotube,?,-10,18,10,24,Blood,Cancer,THP-1,Genechip_Affymetrix,triggered,triggered,triggered,triggered,triggered,no_effect,no_effect,triggered,no_effect
+TiO2_NPs,634,nanotube,?,-10,18,100,24,Intestinal,Cancer,CACO-2,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,no_effect,no_effect,triggered,no_effect
+TiO2_NPs,634,nanotube,?,-10,18,100,24,Intestinal,Normal,SAE,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,triggered
+TiO2_NPs,634,nanotube,?,-10,18,100,24,Blood,Cancer,THP-1,Genechip_Affymetrix,triggered,triggered,triggered,triggered,triggered,no_effect,no_effect,triggered,no_effect
+TiO2_NPs,634,nanotube,?,-10,18,100,1,Intestinal,Cancer,CACO-2,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,no_effect
+TiO2_NPs,634,nanotube,?,-10,18,100,1,Lung,Normal,SAE,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,triggered
+TiO2_NPs,634,nanotube,?,-10,18,10,1,Blood,Cancer,THP-1,Genechip_Affymetrix,triggered,triggered,triggered,triggered,triggered,no_effect,no_effect,triggered,no_effect
+TiO2_NPs,634,nanotube,?,-10,18,10,1,Intestinal,Cancer,CACO-2,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,no_effect,no_effect,triggered,no_effect
+TiO2_NPs,634,nanotube,?,-10,18,10,1,Lung,Normal,SAE,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,no_effect,no_effect,no_effect,triggered,triggered
+SiO2,10,Spherical,none,-44,124,50,4,Intestinal,Cancer,RKO,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,5,Spherical,none,-45,240,50,4,Intestinal,Cancer,RKO,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,9,Spherical,none,-54,24,5,4,Intestinal,Cancer,RKO,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+Fe2O3_NPs,3,Spherical,none,-62,222,10,4,Intestinal,Cancer,RKO,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+SiO2,10,Spherical,none,-44,124,50,4,Intestinal,Cancer,SK Mel-28,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,5,Spherical,none,-45,240,50,4,Intestinal,Cancer,CACO-2,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,9,Spherical,none,-54,24,5,4,Intestinal,Cancer,CACO-2,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+Fe2O3_NPs,3,Spherical,none,-62,222,10,4,Intestinal,Cancer,CACO-2,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,5,Spherical,none,-45,240,1,4,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,9,Spherical,none,-54,24,1,4,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+TiO2_NPs,5,Spherical,none,-45,240,1,4,Dermal,Cancer,SK MEL-28,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,9,Spherical,none,-54,24,1,4,Dermal,Cancer,SK MEL-28,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+TiO2_NPs,5,Spherical,none,-45,240,5,4,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,9,Spherical,none,-54,24,5,4,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+TiO2_NPs,5,Spherical,none,-45,240,5,4,Dermal,Cancer,SK MEL-28,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+ZnO_NPs,9,Spherical,none,-54,24,5,4,Dermal,Cancer,SK MEL-28,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,triggered,triggered,triggered,no_effect,no_effect
+Au_NPs,13,Spherical,none,?,23.89,50,6,Blood,Normal,293T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Au_NPs,13,Spherical,none,?,23.89,50,24,Blood,Normal,293T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Au_NPs,13,Spherical,none,?,23.89,50,48,Blood,Normal,293T,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,7,Ellipsoid,none,-17,316,1,24,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,20,Ellipsoid,none,-17,66,1,24,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,200,Ellipsoid,none,-17,10,1,24,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,triggered,triggered,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,7,Ellipsoid,none,-17,316,1,2,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,20,Ellipsoid,none,-17,66,1,2,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,200,Ellipsoid,none,-17,10,1,2,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,7,Ellipsoid,none,-17,316,1,6,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,20,Ellipsoid,none,-17,66,1,6,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+TiO2_NPs,200,Ellipsoid,none,-17,10,1,6,Dermal,Normal,HACAT,WHG_Agilent,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect,no_effect
+Ag_NPs,20,Spherical,Citrate,?,?,5,24,Intestinal,Cancer,CACO-2,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Ag_NPs,110,Spherical,Citrate,?,?,25,24,Intestinal,Cancer,CACO-2,Genechip_Affymetrix,triggered,triggered,no_effect,no_effect,triggered,no_effect,no_effect,no_effect,no_effect
+Ag_NPs,15,?,surfactant,?,38.1,2.5,24,Intestinal,Cancer,CACO-2,Genechip_Affymetrix,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+Ag_NPs,15,?,surfactant,?,38.1,25,24,Intestinal,Cancer,CACO-2,Genechip_Affymetrix,triggered,triggered,no_effect,triggered,triggered,no_effect,triggered,no_effect,no_effect
+ZnO_NPs,20,?,none,?,?,25,24,Lung,Cancer,A549,WHG_Agilent,no_effect,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+ZnO_NPs,60,?,none,?,?,25,24,Lung,Cancer,A549,WHG_Agilent,no_effect,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
+ZnO_NPs,50,?,none,?,?,25,24,Lung,Cancer,A549,WHG_Agilent,no_effect,triggered,triggered,no_effect,triggered,no_effect,triggered,no_effect,no_effect
