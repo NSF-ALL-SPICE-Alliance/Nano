@@ -1,0 +1,143 @@
+---
+title: "NanoE-Tox Exploratory Analysis"
+author: "Connor Flynn"
+date: "7/10/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(tidyverse)
+library(janitor)
+library(naniar)
+```
+
+Read in Data
+
+```{r}
+nano_e_tox <- read_csv(here("data/Beilstein_J_Nanotechnol-06-1788-s002/NanoE-Tox-database.csv"))
+```
+
+Select columns up to column 35 (the rest are blank)
+
+```{r}
+nano_e_tox <- nano_e_tox[, 1:35]
+```
+
+Clean Column Names
+
+```{r}
+nano_e_tox <- nano_e_tox %>% 
+  clean_names()
+```
+
+Missingness 
+
+```{r}
+gg_miss_var(nano_e_tox)
+```
+
+
+Explore the toxicity value column
+
+```{r}
+class(nano_e_tox$toxicity_value)
+```
+
+Change the class of toxicity_value to factor
+
+```{r}
+nano_e_tox$toxicity_value <- as.factor(nano_e_tox$toxicity_value)
+```
+
+Find the unique values in the toxicity_value column
+
+```{r}
+unique_toxicity_values <- unique(nano_e_tox$toxicity_value)
+```
+
+Store the unique values as levels in a dataframe
+
+```{r}
+levels_unique_toxicity_values <- as.data.frame(levels(unique_toxicity_values))
+```
+
+
+**Challenge** Normalizing
+
+Seperate numeric values and units into 2 separate columns
+- value
+- unit
+
+```{r}
+nano_e_tox <- nano_e_tox %>%
+   mutate(value = str_extract(toxicity_value, "[0-9]+(?:\\.[0-9]+)?"),
+         unit = str_extract(toxicity_value, "(?<= )[\\D]+"))
+```
+
+Check results
+
+```{r}
+nano_e_tox %>% 
+  select(toxicity_value, value, unit)
+```
+
+
+Define a function to convert units to mg/L
+```{r}
+convert_to_mg_L <- function(value, unit) {
+  if (unit == "mg/L") {
+    return(value)
+  } else if (unit == "mg/kg") {
+    return(value)
+  } else if (unit == "nM") {
+    # Conversion factor: 1 nM = 1e-6 mg/L
+    return(value * 1e-6)
+  } else if (unit == "ppm") {
+    # Conversion factor: 1 ppm = 1 mg/L
+    return(value)
+  } else if (unit == "ppt (ng/L?)") {
+    # Conversion factor: 1 ppt = 1 ng/L = 1e-6 mg/L
+    return(value * 1e-6)
+  } else if (unit == "µg dissolved Zn/L" ||
+             unit == "µg/L" ||
+             unit == "µg/g" ||
+             unit == "µg/mL" ||
+             unit == "µM" ||
+             unit == "µg" ||
+             unit == "µg/g of food") {
+    # Conversion factor: 1 µg = 1e-3 mg
+    return(value * 1e-3)
+  } else if (unit == "M ZnO") {
+    # Conversion factor: 1 M = 1e6 mg/L
+    return(value * 1e6)
+  } else if (unit == "mg Cu/L") {
+    return(value)
+  } else if (unit == "mg/kg of dry feed" ||
+             unit == "mg/kg dry food" ||
+             unit == "mg/kg" ||
+             unit == "mg" ||
+             unit == "mg/g") {
+    # Conversion factor: 1 mg = 1 mg/L
+    return(value)
+  } else {
+    return(NA)
+  }
+}
+```
+
+
+Apply the conversion function to normalize the values
+
+```{r}
+nano_e_tox <- nano_e_tox %>%
+  mutate(normalized_toxicity_value = convert_to_mg_L(value, str_extract(toxicity_value, "[^0-9.]+")))
+```
+
+
+
+
+
+
+
