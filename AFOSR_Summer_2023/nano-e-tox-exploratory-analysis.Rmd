@@ -64,11 +64,147 @@ levels_unique_toxicity_values <- as.data.frame(levels(unique_toxicity_values))
 ```
 
 
+
+
 **Challenge** Normalizing
+
+Exploration pre-normalizing 
+
+1. how many ranges (-)
+
+```{r}
+toxicity_ranges <- subset(nano_e_tox, grepl("-", toxicity_value))
+```
+
+```{r}
+toxicity_ranges <- toxicity_ranges[!grepl("\\([^\\)]+\\)", toxicity_ranges$toxicity_value), ]
+```
+
+
+2. how many greater than less than (> <)
+
+```{r}
+toxicity_greater_less <- subset(nano_e_tox, grepl("[><]", toxicity_value))
+```
+
+3. how many ±
+
+```{r}
+toxicity_plus_minus <- subset(nano_e_tox, grepl("[±]", toxicity_value))
+```
+
+4. how many confidence intervals (%)
+
+```{r}
+toxicity_confidence <- subset(nano_e_tox, grepl("[%]", toxicity_value))
+```
+
+Raw values only 
+
+```{r}
+nano_raw_toxicity_values <- subset(nano_e_tox, !grepl("\\(|±|-|>|<|≤|%", toxicity_value))
+```
+
+
 
 Seperate numeric values and units into 2 separate columns
 - value
 - unit
+
+
+```{r}
+nano_raw_toxicity_values <- nano_raw_toxicity_values %>% 
+  mutate(value = str_extract(toxicity_value, "[0-9.]+([ ][0-9.]+)?"),
+         unit = str_extract(toxicity_value, "[^0-9.]+"))
+```
+
+
+```{r}
+nano_raw_toxicity_values %>% 
+  select(toxicity_value, value, unit)
+```
+
+Find unique values in the unit column
+
+```{r}
+unique(nano_raw_toxicity_values$unit)
+```
+
+
+
+
+Create function
+
+```{r}
+standardize_to_mg_per_L <- function(value, unit) {
+  # Convert value to numeric
+  value <- as.numeric(value)
+  
+  # Standardize based on unit
+  if (is.na(unit)) {
+    # If unit is NA, return value as it is
+    standardized <- value
+  } else {
+    unit <- trimws(unit)  # Remove leading/trailing whitespace
+    
+    if (grepl("µg/mL", unit) || grepl("ppm", unit)) {
+      # Convert µg/mL or ppm to mg/L
+      standardized <- value * 1000
+    } else if (grepl("mg/kg", unit) || grepl("µg/g", unit) || grepl("mg Ag/kg", unit) || grepl("mg Zn/kg", unit) || grepl("mg/g", unit) || grepl("mg Cu/g", unit)) {
+      # Convert mg/kg, µg/g, mg Ag/kg, mg Zn/kg, mg/g, mg Cu/g to mg/L
+      standardized <- value
+    } else if (grepl("g/l", unit) || grepl("g/L", unit)) {
+      # Convert g/l or g/L to mg/L
+      standardized <- value * 1000
+    } else if (grepl("µg/L", unit) || grepl("mg/ml", unit)) {
+      # Convert µg/L or mg/ml to mg/L
+      standardized <- value
+    } else if (grepl("µg dissolved", unit) || grepl("µg Ag/L", unit) || grepl("µg Cu/g", unit) || grepl("nmol/g fresh weight", unit) || grepl("nM", unit)) {
+      # Convert µg dissolved, µg Ag/L, µg Cu/g, nmol/g fresh weight, nM to mg/L
+      standardized <- value / 1000
+    } else if (grepl("mmol/g", unit) || grepl("mM", unit)) {
+      # Convert mmol/g or mM to mg/L
+      standardized <- value * 1000
+    } else if (grepl("mg Zn/kg", unit)) {
+      # Convert mg Zn/kg to mg/L
+      standardized <- value
+    } else {
+      # If unit is not recognized, return value as it is
+      standardized <- value
+    }
+  }
+  
+  return(standardized)
+}
+
+# Apply the function to create the standardized_values column
+nano_raw_toxicity_values <- nano_raw_toxicity_values %>%
+  mutate(standardized_values = format(standardize_to_mg_per_L(value, unit), scientific = FALSE))
+```
+
+
+```{r}
+nano_raw_toxicity_values %>% 
+  select(toxicity_value, value, unit, standardized_values)
+```
+Results Test
+
+mg/mL to mg/L works
+- 1 mg/mL = 1,000 mg/L
+
+g/l to mg/L works 
+- 1 g/l = 1,000 mg/L
+
+µg/mL to mg/L doesn't work 
+- 1 µg/mL = 1 mg/L
+
+
+
+
+
+
+
+
 
 ```{r}
 nano_e_tox <- nano_e_tox %>%
