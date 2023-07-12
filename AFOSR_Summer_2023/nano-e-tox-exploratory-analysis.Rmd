@@ -72,8 +72,8 @@ Seperate numeric values and units into 2 separate columns
 
 ```{r}
 nano_e_tox <- nano_e_tox %>%
-   mutate(value = str_extract(toxicity_value, "[0-9]+(?:\\.[0-9]+)?"),
-         unit = str_extract(toxicity_value, "(?<= )[\\D]+"))
+  mutate(value = str_extract(toxicity_value, "\\(?([0-9.]+)\\s*-?\\s*[0-9.]*\\)?|([0-9.]+)\\s*±\\s*[0-9.]+"),
+         unit = str_extract(toxicity_value, "(?<=\\s)[^0-9.()\\s±]+(?=\\s|$)"))
 ```
 
 Check results
