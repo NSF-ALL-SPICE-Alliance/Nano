@@ -11,6 +11,7 @@ library(here)
 library(tidyverse)
 library(janitor)
 library(naniar)
+options(scipen = 99)
 ```
 
 Read in Data
@@ -76,9 +77,7 @@ Exploration pre-normalizing
 toxicity_ranges <- subset(nano_e_tox, grepl("-", toxicity_value))
 ```
 
-```{r}
-toxicity_ranges <- toxicity_ranges[!grepl("\\([^\\)]+\\)", toxicity_ranges$toxicity_value), ]
-```
+
 
 
 2. how many greater than less than (> <)
@@ -130,56 +129,51 @@ Find unique values in the unit column
 unique(nano_raw_toxicity_values$unit)
 ```
 
+```{r}
+nano_raw_toxicity_values$value <- as.numeric(nano_raw_toxicity_values$value)
+```
 
 
 
 Create function
 
 ```{r}
-standardize_to_mg_per_L <- function(value, unit) {
-  # Convert value to numeric
-  value <- as.numeric(value)
-  
-  # Standardize based on unit
-  if (is.na(unit)) {
-    # If unit is NA, return value as it is
-    standardized <- value
-  } else {
-    unit <- trimws(unit)  # Remove leading/trailing whitespace
-    
-    if (grepl("µg/mL", unit) || grepl("ppm", unit)) {
-      # Convert µg/mL or ppm to mg/L
-      standardized <- value * 1000
-    } else if (grepl("mg/kg", unit) || grepl("µg/g", unit) || grepl("mg Ag/kg", unit) || grepl("mg Zn/kg", unit) || grepl("mg/g", unit) || grepl("mg Cu/g", unit)) {
-      # Convert mg/kg, µg/g, mg Ag/kg, mg Zn/kg, mg/g, mg Cu/g to mg/L
-      standardized <- value
-    } else if (grepl("g/l", unit) || grepl("g/L", unit)) {
-      # Convert g/l or g/L to mg/L
-      standardized <- value * 1000
-    } else if (grepl("µg/L", unit) || grepl("mg/ml", unit)) {
-      # Convert µg/L or mg/ml to mg/L
-      standardized <- value
-    } else if (grepl("µg dissolved", unit) || grepl("µg Ag/L", unit) || grepl("µg Cu/g", unit) || grepl("nmol/g fresh weight", unit) || grepl("nM", unit)) {
-      # Convert µg dissolved, µg Ag/L, µg Cu/g, nmol/g fresh weight, nM to mg/L
-      standardized <- value / 1000
-    } else if (grepl("mmol/g", unit) || grepl("mM", unit)) {
-      # Convert mmol/g or mM to mg/L
-      standardized <- value * 1000
-    } else if (grepl("mg Zn/kg", unit)) {
-      # Convert mg Zn/kg to mg/L
-      standardized <- value
+convert_to_mg_L <- function(df) {
+  unit_conversion <- function(value, unit) {
+    if (is.na(unit) || is.na(value)) {
+      return(NA)
     } else {
-      # If unit is not recognized, return value as it is
-      standardized <- value
+      unit <- trimws(tolower(unit))
+      
+      if (unit == "mg/l" || unit == "mg zn/kg d" || unit == "mg/kg" || unit == "mg/kg dry food" ||
+          unit == "mg zn/kg" || unit == "mg/l" || unit == "mg zn/ml" || unit == "mg/ml") {
+        return(value)
+      } else if (unit == "g/l" || unit == "g/kg" || unit == "mg/g" || unit == "mg/g dry matter") {
+        return(value * 1000)
+      } else if (unit == "µg/ml" || unit == "µg/g of food" || unit == "µg/l" || unit == "µg dissolved zn/l" ||
+                 unit == "µg ag/l" || unit == "µg dissolved ag/l" || unit == "µg" || unit == "µg/g" ||
+                 unit == "µg zn/g" || unit == "µg zn/mg" || unit == "µg zn/ml" || unit == "µg cu/g") {
+        return(value * 0.001)
+      } else if (unit == "ppm" || unit == "mg ag/l" || unit == "nm" || unit == "nmol/g fresh weight") {
+        return(value)
+      } else if (unit == "mmol/g" || unit == "µm" || unit == "m" || unit == "molar") {
+        return(NA)
+      } else {
+        return(NA)
+      }
     }
   }
   
-  return(standardized)
+  df$standardized_values <- unit_conversion(df$value, df$unit)
+  return(df)
 }
 
-# Apply the function to create the standardized_values column
-nano_raw_toxicity_values <- nano_raw_toxicity_values %>%
-  mutate(standardized_values = format(standardize_to_mg_per_L(value, unit), scientific = FALSE))
+
+
+```
+
+```{r}
+nano_raw_toxicity_values <- convert_to_mg_L(nano_raw_toxicity_values)
 ```
 
 
@@ -188,6 +182,9 @@ nano_raw_toxicity_values %>%
   select(toxicity_value, value, unit, standardized_values)
 ```
 Results Test
+
+mg/L to mg/L doesn't work
+- 1 mg/mL = 1 mg/mL
 
 mg/mL to mg/L works
 - 1 mg/mL = 1,000 mg/L
@@ -198,6 +195,9 @@ g/l to mg/L works
 µg/mL to mg/L doesn't work 
 - 1 µg/mL = 1 mg/L
 
+```{r}
+
+```
 
 
 
