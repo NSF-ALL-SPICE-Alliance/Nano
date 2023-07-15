@@ -146,7 +146,7 @@ convert_to_mg_L <- function(df) {
       unit <- trimws(tolower(unit))
       
       if (unit == "mg/l" || unit == "mg zn/kg d" || unit == "mg/kg" || unit == "mg/kg dry food" ||
-          unit == "mg zn/kg" || unit == "mg/l" || unit == "mg zn/ml" || unit == "mg/ml") {
+          unit == "mg zn/kg" ||  unit == "mg zn/ml" || unit == "mg/ml") {
         return(value)
       } else if (unit == "g/l" || unit == "g/kg" || unit == "mg/g" || unit == "mg/g dry matter") {
         return(value * 1000)
