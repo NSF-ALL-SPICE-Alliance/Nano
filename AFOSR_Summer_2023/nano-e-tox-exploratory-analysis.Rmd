@@ -16,7 +16,7 @@ options(scipen = 99)
 
 Read in Data
 
-```{r}
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 nano_e_tox <- read_csv(here("data/Beilstein_J_Nanotechnol-06-1788-s002/NanoE-Tox-database.csv"))
 ```
 
@@ -101,7 +101,7 @@ toxicity_confidence <- subset(nano_e_tox, grepl("[%]", toxicity_value))
 Raw values only 
 
 ```{r}
-nano_raw_toxicity_values <- subset(nano_e_tox, !grepl("\\(|±|-|>|<|≤|%", toxicity_value))
+nano_raw_toxicity_values <- subset(nano_e_tox, !grepl("\\(|±|-|>|<|≤|%|~", toxicity_value))
 ```
 
 
@@ -134,142 +134,91 @@ nano_raw_toxicity_values$value <- as.numeric(nano_raw_toxicity_values$value)
 ```
 
 
+```{r}
+as.data.frame(table(nano_raw_toxicity_values$unit))
+```
 
-Create function
+
+
+
+Create a function to standardize 
 
 ```{r}
-convert_to_mg_L <- function(df) {
-  unit_conversion <- function(value, unit) {
-    if (is.na(unit) || is.na(value)) {
-      return(NA)
+standardize_to_mg_per_l <- function(df) {
+  # Define a conversion factor dictionary for different units
+  conversion_factors <- c(
+    "mg/L" = 1,
+    "mg/mL" = 1000,
+    "g/l" = 1000,
+    "µg/mL" = 1,
+    "mg/kg" = 1,
+    "µg/g of food" = 1,
+    "g/kg" = 1000,
+    "mg/kg dry food" = 1,
+    "ppm" = 1,
+    "mg Zn/kg  d" = 1,
+    "µg/L" = 0.001,
+    "mmol/g" = 1,
+    "mg Zn/kg" = 1,
+    "µg dissolved Zn/L" = 1,
+    "nM" = 1,
+    "µM" = 1000,
+    "µg Ag/L" = 1,
+    "µg dissolved Ag/L" = 1,
+    "mg/kg of dry feed" = 1,
+    "mg Ag/L" = 1,
+    "µg/g" = 1,
+    "mg Ag/kg" = 1,
+    "µg" = 1,
+    "mM" = 1000,
+    "g/L" = 1000,
+    "nmol/g fresh weight" = 1,
+    "µg Cu/g" = 1
+  )
+  
+  # Create a new column 'standardized_values' to store the standardized values
+  df$standardized_values <- NA
+  
+  # Loop through the dataframe rows and standardize the values
+  for (i in seq_len(nrow(df))) {
+    unit <- trimws(df$unit[i])  # Trim leading and trailing spaces
+    value <- df$value[i]
+    
+    # Check if the unit exists in the conversion_factors dictionary
+    if (!is.na(unit) && unit %in% names(conversion_factors)) {
+      df$standardized_values[i] <- value * conversion_factors[unit]
     } else {
-      unit <- trimws(tolower(unit))
-      
-      if (unit == "mg/l" || unit == "mg zn/kg d" || unit == "mg/kg" || unit == "mg/kg dry food" ||
-          unit == "mg zn/kg" ||  unit == "mg zn/ml" || unit == "mg/ml") {
-        return(value)
-      } else if (unit == "g/l" || unit == "g/kg" || unit == "mg/g" || unit == "mg/g dry matter") {
-        return(value * 1000)
-      } else if (unit == "µg/ml" || unit == "µg/g of food" || unit == "µg/l" || unit == "µg dissolved zn/l" ||
-                 unit == "µg ag/l" || unit == "µg dissolved ag/l" || unit == "µg" || unit == "µg/g" ||
-                 unit == "µg zn/g" || unit == "µg zn/mg" || unit == "µg zn/ml" || unit == "µg cu/g") {
-        return(value * 0.001)
-      } else if (unit == "ppm" || unit == "mg ag/l" || unit == "nm" || unit == "nmol/g fresh weight") {
-        return(value)
-      } else if (unit == "mmol/g" || unit == "µm" || unit == "m" || unit == "molar") {
-        return(NA)
-      } else {
-        return(NA)
-      }
+      df$standardized_values[i] <- NA
     }
   }
   
-  df$standardized_values <- unit_conversion(df$value, df$unit)
+  # Return the dataframe with the standardized values
   return(df)
 }
-
-
-
-```
-
-```{r}
-nano_raw_toxicity_values <- convert_to_mg_L(nano_raw_toxicity_values)
 ```
 
 
 ```{r}
-nano_raw_toxicity_values %>% 
-  select(toxicity_value, value, unit, standardized_values)
+nano_raw_toxicity_values_standardized <- standardize_to_mg_per_l(nano_raw_toxicity_values)
 ```
-Results Test
-
-mg/L to mg/L doesn't work
-- 1 mg/mL = 1 mg/mL
-
-mg/mL to mg/L works
-- 1 mg/mL = 1,000 mg/L
-
-g/l to mg/L works 
-- 1 g/l = 1,000 mg/L
-
-µg/mL to mg/L doesn't work 
-- 1 µg/mL = 1 mg/L
-
-```{r}
-
-```
-
-
-
-
-
-
 
 
 ```{r}
-nano_e_tox <- nano_e_tox %>%
-  mutate(value = str_extract(toxicity_value, "\\(?([0-9.]+)\\s*-?\\s*[0-9.]*\\)?|([0-9.]+)\\s*±\\s*[0-9.]+"),
-         unit = str_extract(toxicity_value, "(?<=\\s)[^0-9.()\\s±]+(?=\\s|$)"))
-```
+nano_raw_toxicity_values_standardized %>% 
+  select(toxicity_value, value, unit, standardized_values) 
 
-Check results
+```
 
 ```{r}
-nano_e_tox %>% 
-  select(toxicity_value, value, unit)
+as.data.frame(table(nano_raw_toxicity_values_standardized$unit))
 ```
 
 
-Define a function to convert units to mg/L
-```{r}
-convert_to_mg_L <- function(value, unit) {
-  if (unit == "mg/L") {
-    return(value)
-  } else if (unit == "mg/kg") {
-    return(value)
-  } else if (unit == "nM") {
-    # Conversion factor: 1 nM = 1e-6 mg/L
-    return(value * 1e-6)
-  } else if (unit == "ppm") {
-    # Conversion factor: 1 ppm = 1 mg/L
-    return(value)
-  } else if (unit == "ppt (ng/L?)") {
-    # Conversion factor: 1 ppt = 1 ng/L = 1e-6 mg/L
-    return(value * 1e-6)
-  } else if (unit == "µg dissolved Zn/L" ||
-             unit == "µg/L" ||
-             unit == "µg/g" ||
-             unit == "µg/mL" ||
-             unit == "µM" ||
-             unit == "µg" ||
-             unit == "µg/g of food") {
-    # Conversion factor: 1 µg = 1e-3 mg
-    return(value * 1e-3)
-  } else if (unit == "M ZnO") {
-    # Conversion factor: 1 M = 1e6 mg/L
-    return(value * 1e6)
-  } else if (unit == "mg Cu/L") {
-    return(value)
-  } else if (unit == "mg/kg of dry feed" ||
-             unit == "mg/kg dry food" ||
-             unit == "mg/kg" ||
-             unit == "mg" ||
-             unit == "mg/g") {
-    # Conversion factor: 1 mg = 1 mg/L
-    return(value)
-  } else {
-    return(NA)
-  }
-}
-```
 
 
-Apply the conversion function to normalize the values
 
-```{r}
-nano_e_tox <- nano_e_tox %>%
-  mutate(normalized_toxicity_value = convert_to_mg_L(value, str_extract(toxicity_value, "[^0-9.]+")))
-```
+
+
 
 
 
