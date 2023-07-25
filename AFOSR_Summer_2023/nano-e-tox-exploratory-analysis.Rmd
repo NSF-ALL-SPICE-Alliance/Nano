@@ -260,17 +260,16 @@ Plotting
 
 
 ```{r}
-a <- ggplot(nano_raw_toxicity_values_mg_l_noec, aes(x = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
+test_org_toxicity_value <- ggplot(nano_raw_toxicity_values_mg_l_noec, aes(x = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
                                                y = value,
-                                               fill = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
-                                                label = test_endpoint)) +
+                                               fill = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)) +
   geom_boxplot() +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   theme(legend.position="none") +
   ylim(0, 1000)
 
-ggplotly(a)
+ggplotly(test_org_toxicity_value)
 ```
 
 ```{r}
@@ -280,12 +279,13 @@ table(nano_raw_toxicity_values_mg_l_noec$test_endpoint)
 
 
 ```{r}
-b <- ggplot(nano_raw_toxicity_values_mg_l_noec, aes(y = name, x = value, color = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)) +
+material_test_org_toxicity_value_endpoint <- ggplot(nano_raw_toxicity_values_mg_l_noec, aes(y = name, x = value, color = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
+                                                    label = test_endpoint)) +
   geom_point() +
   theme_minimal() +
   theme(legend.position="none") +
   xlim(0, 1000)
-ggplotly(b)
+ggplotly(material_test_org_toxicity_value_endpoint)
   
 ```
 
@@ -300,7 +300,8 @@ nano_raw_toxicity_values_mg_l_ec_50 <- nano_raw_toxicity_values_mg_l %>%
 
 
 ```{r}
-c <- ggplot(nano_raw_toxicity_values_mg_l_ec_50, aes(y = name, x = value, color = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)) +
+c <- ggplot(nano_raw_toxicity_values_mg_l_ec_50, aes(y = name, x = value, color = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
+                                                     label = test_endpoint)) +
   geom_point() +
   theme_minimal() +
   theme(legend.position="none") +
@@ -346,4 +347,20 @@ a <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = type_of_test_organ
 ggplotly(a)
 ```
 
+```{r}
+d <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = name,
+                                               y = value,
+                                               fill = name,
+                                                label = test_endpoint)) +
+  geom_boxplot() +
+  facet_wrap(~toxicity_measure) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(legend.position="none") +
+  ylim(0, 1000) +
+  labs(y = "toxicity value mg/L",
+       x = "material") 
+
+ggplotly(d)
+```
 
