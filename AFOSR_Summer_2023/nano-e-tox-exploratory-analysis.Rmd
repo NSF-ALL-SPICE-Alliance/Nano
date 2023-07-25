@@ -11,6 +11,7 @@ library(here)
 library(tidyverse)
 library(janitor)
 library(naniar)
+library(plotly)
 options(scipen = 99)
 ```
 
@@ -70,6 +71,12 @@ levels_unique_toxicity_values <- as.data.frame(levels(unique_toxicity_values))
 **Challenge** Normalizing
 
 Exploration pre-normalizing 
+
+```{r}
+nano_e_tox %>% 
+  select(toxicity_value)
+```
+
 
 1. how many ranges (-)
 
@@ -135,7 +142,7 @@ nano_raw_toxicity_values$value <- as.numeric(nano_raw_toxicity_values$value)
 
 
 ```{r}
-as.data.frame(table(nano_raw_toxicity_values$unit))
+unit_frequency <- as.data.frame(table(nano_raw_toxicity_values$unit))
 ```
 
 
@@ -151,7 +158,7 @@ standardize_to_mg_per_l <- function(df) {
     "mg/mL" = 1000,
     "g/l" = 1000,
     "µg/mL" = 1,
-    "mg/kg" = 1,
+    #"mg/kg" = 1, can't be standardized
     "µg/g of food" = 1,
     "g/kg" = 1000,
     "mg/kg dry food" = 1,
@@ -167,11 +174,10 @@ standardize_to_mg_per_l <- function(df) {
     "µg dissolved Ag/L" = 1,
     "mg/kg of dry feed" = 1,
     "mg Ag/L" = 1,
-    "µg/g" = 1,
+    "µg/g" = 1, # may need a density value
     "mg Ag/kg" = 1,
     "µg" = 1,
     "mM" = 1000,
-    "g/L" = 1000,
     "nmol/g fresh weight" = 1,
     "µg Cu/g" = 1
   )
@@ -215,14 +221,129 @@ as.data.frame(table(nano_raw_toxicity_values_standardized$unit))
 
 
 
+Subsetting for raw values in mg/L
+
+```{r}
+nano_raw_toxicity_values
+```
+Trim leading and trailing spaces
+
+```{r}
+nano_raw_toxicity_values$unit <- trimws(nano_raw_toxicity_values$unit)
+```
+
+
+```{r}
+nano_raw_toxicity_values_mg_l <- nano_raw_toxicity_values %>% 
+  filter(unit == "mg/L")
+```
+
+
+
+
+```{r}
+table(nano_raw_toxicity_values_mg_l$toxicity_measure)
+```
+
+```{r}
+nano_raw_toxicity_values_mg_l_noec <- nano_raw_toxicity_values_mg_l %>% 
+  filter(toxicity_measure == "NOEC")
+```
+
+
+```{r}
+table(nano_raw_toxicity_values_mg_l_noec$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)
+```
+
+
+Plotting
+
+
+```{r}
+a <- ggplot(nano_raw_toxicity_values_mg_l_noec, aes(x = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
+                                               y = value,
+                                               fill = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
+                                                label = test_endpoint)) +
+  geom_boxplot() +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(legend.position="none") +
+  ylim(0, 1000)
+
+ggplotly(a)
+```
+
+```{r}
+table(nano_raw_toxicity_values_mg_l_noec$test_endpoint)
+```
+
+
+
+```{r}
+b <- ggplot(nano_raw_toxicity_values_mg_l_noec, aes(y = name, x = value, color = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)) +
+  geom_point() +
+  theme_minimal() +
+  theme(legend.position="none") +
+  xlim(0, 1000)
+ggplotly(b)
+  
+```
 
 
 
 
 
+```{r}
+nano_raw_toxicity_values_mg_l_ec_50 <- nano_raw_toxicity_values_mg_l %>% 
+  filter(toxicity_measure == "EC50")
+```
+
+
+```{r}
+c <- ggplot(nano_raw_toxicity_values_mg_l_ec_50, aes(y = name, x = value, color = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)) +
+  geom_point() +
+  theme_minimal() +
+  theme(legend.position="none") +
+  xlim(0, 500)
+ggplotly(c)
+```
 
 
 
+```{r}
+toxicity_measurements <- c("LOEC", "NOEC", "EC50")
+```
 
+
+```{r}
+nano_raw_toxicity_values_mg_l_common_tox<- nano_raw_toxicity_values_mg_l %>% 
+  filter(toxicity_measure %in% toxicity_measurements)
+```
+
+
+```{r}
+gg_miss_var(nano_raw_toxicity_values_mg_l_common_tox)
+```
+```{r}
+table(nano_raw_toxicity_values_mg_l_common_tox$test_duration_h_or_days)
+```
+
+
+```{r}
+a <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
+                                               y = value,
+                                               fill = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
+                                                label = test_endpoint)) +
+  geom_boxplot() +
+  facet_wrap(~toxicity_measure) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(legend.position="none") +
+  ylim(0, 1000) +
+  labs(y = "toxicity value mg/L",
+       x = "test organism") 
+
+ggplotly(a)
+```
 
 
