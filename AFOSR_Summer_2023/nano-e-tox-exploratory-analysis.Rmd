@@ -275,12 +275,19 @@ ggplotly(test_org_toxicity_value)
 ```{r}
 table(nano_raw_toxicity_values_mg_l_noec$test_endpoint)
 ```
+```{r}
+
+colnames(nano_raw_toxicity_values_mg_l_noec)[colnames(nano_raw_toxicity_values_mg_l_noec) == "type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other"] ="test_organism_type"
+
+colnames(nano_raw_toxicity_values_mg_l_noec)[colnames(nano_raw_toxicity_values_mg_l_noec) == "name"] ="nanomaterial"
+
+```
 
 
 
 ```{r}
-material_test_org_toxicity_value_endpoint <- ggplot(nano_raw_toxicity_values_mg_l_noec, aes(y = name, x = value, color = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
-                                                    label = test_endpoint)) +
+material_test_org_toxicity_value_endpoint <- ggplot(nano_raw_toxicity_values_mg_l_noec, aes(y = nanomaterial, x = value, color = test_organism_type,
+                                                    label = test_endpoint, label = toxicity_measure)) +
   geom_point() +
   theme_minimal() +
   theme(legend.position="none") +
@@ -288,6 +295,11 @@ material_test_org_toxicity_value_endpoint <- ggplot(nano_raw_toxicity_values_mg_
 ggplotly(material_test_org_toxicity_value_endpoint)
   
 ```
+
+
+
+
+
 
 
 
@@ -311,14 +323,68 @@ ggplotly(c)
 
 
 
+
+
+
 ```{r}
 toxicity_measurements <- c("LOEC", "NOEC", "EC50")
 ```
 
 
+
+
 ```{r}
 nano_raw_toxicity_values_mg_l_common_tox<- nano_raw_toxicity_values_mg_l %>% 
   filter(toxicity_measure %in% toxicity_measurements)
+```
+
+
+```{r}
+colnames(nano_raw_toxicity_values_mg_l_common_tox)[colnames(nano_raw_toxicity_values_mg_l_common_tox) == "type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other"] = "test_organism_type"
+
+colnames(nano_raw_toxicity_values_mg_l_common_tox)[colnames(nano_raw_toxicity_values_mg_l_common_tox) == "name"] ="nanomaterial"
+```
+
+
+```{r}
+material_test_org_toxicity_value_endpoint <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(y = nanomaterial, x = value, color = test_organism_type,
+                                                    label = test_endpoint, shape = toxicity_measure)) +
+  geom_point() +
+  theme_minimal() +
+  theme(legend.position="none") +
+  xlim(0, 1000) +
+  scale_color_brewer(palette = "Set3") +
+  labs(title = "Toxicity of Nanomaterials (NOEC, LOEC, EC50)",
+       y = "Nanomaterial",
+       x = "Toxicity Value up to 250 (mg/L)")
+ggplotly(material_test_org_toxicity_value_endpoint)
+```
+
+
+
+
+
+
+```{r}
+names <- c("Ag", "CeO2", "TiO2") 
+```
+
+```{r}
+nano_raw_toxicity_values_mg_l_common_tox_and_name <- nano_raw_toxicity_values_mg_l_common_tox %>% 
+  filter(name %in% names)
+```
+
+
+```{r}
+ggplot(nano_raw_toxicity_values_mg_l_common_tox_and_name, aes(x = value, fill = toxicity_measure)) +
+  geom_histogram(color = "black") +
+  xlim(0, 250) +
+  ylim(0, 20) +
+  facet_wrap(~name) +
+  theme_bw() +
+  scale_fill_brewer() +
+  labs(title = "Distribution of Toxicity Value by Toxicity Measure",
+       x = "toxicity measure up to 250 mg/L")
 ```
 
 
@@ -331,18 +397,19 @@ table(nano_raw_toxicity_values_mg_l_common_tox$test_duration_h_or_days)
 
 
 ```{r}
-a <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
+a <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = test_organism_type,
                                                y = value,
-                                               fill = type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other,
+                                               fill = test_organism_type,
                                                 label = test_endpoint)) +
   geom_boxplot() +
   facet_wrap(~toxicity_measure) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   theme(legend.position="none") +
-  ylim(0, 1000) +
+  ylim(0, 500) +
   labs(y = "toxicity value mg/L",
-       x = "test organism") 
+       x = "test organism") +
+  coord_flip()
 
 ggplotly(a)
 ```
