@@ -117,3 +117,11 @@ ggplot(aggregated_nano_e_tox, aes(x = name, fill = toxicity_measure)) +
 
 What nanomaterials are acting the most similarly in this dataset? 
 - Can this data answer that question?
+
+
+
+
+
+What is the test endpoint with the highest vulnerability for each nanomaterial?
+
+
