@@ -1,0 +1,119 @@
+---
+title: "Aggregation and Clustering"
+author: "Connor Flynn"
+date: "9/7/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(tidyverse)
+library(janitor)
+library(naniar)
+library(plotly)
+options(scipen = 99)
+```
+
+Read in Data
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+nano_e_tox <- read_csv(here("data/Beilstein_J_Nanotechnol-06-1788-s002/NanoE-Tox-database.csv"))
+```
+
+Select columns up to column 35 (the rest are blank)
+
+```{r}
+nano_e_tox <- nano_e_tox[, 1:35]
+```
+
+Clean Column Names
+
+```{r}
+nano_e_tox <- nano_e_tox %>% 
+  clean_names()
+```
+
+Missingness 
+
+```{r}
+gg_miss_var(nano_e_tox)
+```
+
+
+Explore the toxicity value column
+
+```{r}
+class(nano_e_tox$toxicity_value)
+```
+
+Change the class of toxicity_value to factor
+
+```{r}
+nano_e_tox$toxicity_value <- as.factor(nano_e_tox$toxicity_value)
+```
+
+
+EC = Effect Concentration
+LC = Lethal Concentration
+NOEC = No Observed Effect Concentration
+LOEC = Lowest Observed Effect Concentration
+IC = Inhibitory Concentration
+
+
+Create a function to aggregate with ChatGPT
+
+```{r}
+categorize_toxicity_measure <- function(measure) {
+  if (grepl("^E|^L|^I", measure)) {
+    return("effect")
+  } else if (grepl("^N", measure)) {
+    return("no_effect")
+  } else {
+    return(measure)
+  }
+}
+```
+
+
+```{r}
+aggregated_nano_e_tox <- nano_e_tox
+
+# Apply the categorization function to the toxicity_measure column
+aggregated_nano_e_tox$toxicity_measure <- sapply(nano_e_tox$toxicity_measure, categorize_toxicity_measure)
+```
+
+
+```{r}
+table(aggregated_nano_e_tox$toxicity_measure)
+```
+```{r}
+effect_aggregate <- c("effect", "no_effect")
+
+aggregated_nano_e_tox <- aggregated_nano_e_tox %>% 
+  filter(toxicity_measure %in% effect_aggregate)
+```
+
+
+```{r}
+table(aggregated_nano_e_tox$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)
+```
+
+
+
+```{r}
+table(aggregated_nano_e_tox$test_endpoint)
+```
+
+
+
+```{r}
+ggplot(aggregated_nano_e_tox, aes(x = name, fill = toxicity_measure)) +
+  geom_bar() +
+  coord_flip() +
+  theme_minimal()
+```
+
+
+What nanomaterials are acting the most similarly in this dataset? 
+- Can this data answer that question?

@@ -1,0 +1,218 @@
+---
+title: "Penguins"
+author: "Connor"
+date: "5/31/2023"
+output: html_document
+---
+
+## Welcome to SPICE 2023
+
+This code chunk is where we load in all of the packages that we will use in this script using library(packagename)
+
+- Packages allow us to interact with our data through the use of functions -> function(data)
+
+- If you get the error: "package "packagename" does not exist":
+  - You need to install this package using install.packages("packagename") in the console below
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)# allows us to cut out long file paths (ex. "users/connor/dowloads/etc")
+library(tidyverse) # allows us to do lots of fundamental data science tasks (ex. read_csv)
+library(ggcorrplot) # allows us to make correlation plots
+library(plotly) # allows us to make ggplot objects interactive
+library(janitor) # allows us to clean the column names of our dataframe
+```
+
+
+
+
+
+
+Here is where we read in our data
+
+- We use read_csv from the tidyverse because the file (dataset) we want to read in is a csv (comma separated values)
+
+- We use here to cut out the long file paths and start within our R project
+  - Within our project, the data is in the data folder so we direct our computer to the file with "data/penguins_data/dataset_name"
+
+```{r}
+penguins_data <- read_csv(here("AFRL_Fall_2023/penguins/penguins_lter.csv"))
+```
+
+Clean column names of the dataframe using the clean_names function from the janitor package
+
+- The %>% is called a "pipe". This allows us to make a new dataframe from an existing dataframe and apply new analysis techniques
+  - The keyboard shortcut for a pipe is "command + shift + i"
+
+```{r}
+penguins_data <- penguins_data %>% 
+  clean_names()
+```
+
+
+
+Exploratory Analysis
+
+Let's begin by exploring some of the columns of our dataset
+
+There is an island column 
+- Let's see how many different islands there are in the dataset and how many penguins from the study are on each island
+  - We can use the 'table' function to accomplish this
+  
+```{r}
+table(penguins_data$island)
+```
+
+
+Now, let's look at the body mass column by creating a histogram
+
+```{r}
+ggplot(data = penguins_data, aes(x = body_mass_g, fill = species)) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(data = penguins_data, aes(x = body_mass_g,
+                                 y = delta_15_n_o_oo,
+                                 color = species,
+                                 shape = island)) +
+  geom_point()
+```
+
+
+
+
+
+
+
+
+
+
+This looks good, now let's clean this up and look at body mass by species of penguin
+
+```{r}
+ggplot(data = penguins_data, aes(x = body_mass_g,
+                                 fill = species)) +
+  geom_histogram(color = "black") +
+  theme_minimal() +
+  labs(title = "Penguins, Palmer Station LTER",
+       subtitle = "Body Mass Distribution for Adelie, Chinstrap and Gentoo Penguins",
+       x = "Body mass (g)",
+       y = "Number of Penguins",
+       color = "Penguin species")
+  
+```
+
+Now let's look at the relationship between flipper length and body mass with a scatter plot
+
+```{r}
+ggplot(data = penguins_data, aes(x = flipper_length_mm, 
+                                 y = body_mass_g
+                                 )) +
+         geom_point() +
+          geom_smooth() +
+          theme_minimal() +
+  labs(title = "Relationship between Body Mass and Flipper Length",
+       x = "Flipper Lenghts (mm)",
+       y = "Body Mass")
+```
+
+```{r}
+ggplot(data = penguins_data, aes(x = culmen_depth_mm,
+                                 y = flipper_length_mm,
+                                 color = species)) +
+  geom_point() +
+  geom_smooth()
+```
+
+Bar chart of averagebody mass by species
+
+```{r}
+average_body_mass_by_species <- penguins_data %>%
+  group_by(species) %>% 
+  summarize(average_body_mass_g = mean(body_mass_g, na.rm = TRUE))
+```
+
+```{r}
+ggplot(data = average_body_mass_by_species, aes(y = species, 
+                                                x = average_body_mass_g)) +
+  geom_col(stat = "identity")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+weights <- 10 + 15 + 28
+weights
+```
+
+
+
+```{r}
+mean(weights)
+```
+
+
+It looks like there is a strong positive correlation between body mass and flipper length
+- Let's add some variables from the dataset
+  - Island
+  - Species
+  - Sex
+
+
+```{r}
+ggplot(data = penguins_data, aes(x = flipper_length_mm, 
+                                 y = body_mass_g,
+                                 color = species,
+                                 shape = sex)) +
+         geom_point() +
+  theme_minimal() +
+  labs(title = "Penguin size, Palmer Station LTER",
+       subtitle = "Flipper length and body mass for Adelie, Chinstrap and Gentoo Penguins",
+       x = "Flipper length (mm)",
+       y = "Body mass (g)",
+       color = "Penguin species",
+       shape = "Penguin sex") +
+  theme(axis.text.x = element_text(angle = 45)) +
+  facet_grid(~island)
+```
+
+Now let's explore the relationships between our numeric columns in the dataset with a correlation matrix
+
+Select numeric columns for correlations
+
+```{r}
+penguins_data_numeric <- penguins_data %>% 
+  select(culmen_length_mm, culmen_depth_mm, flipper_length_mm, body_mass_g)
+```
+
+Create a correlation matrix
+
+```{r}
+cor_matrix <- cor(penguins_data_numeric[complete.cases(penguins_data_numeric), ], use = "pairwise.complete.obs")
+```
+
+Plot the correlation matrix
+
+```{r}
+corrplot <- ggcorrplot(cor_matrix, type = "lower", outline.color = "white") +
+  theme(axis.text.x = element_text(size = 3),
+        axis.text.y = element_text(size = 3))
+corrplot
+```
+Make the correlation plot interactive
+
+
+```{r}
+ggplotly(corrplot)
+```

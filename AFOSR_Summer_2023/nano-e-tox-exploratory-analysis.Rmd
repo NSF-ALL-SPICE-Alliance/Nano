@@ -347,19 +347,43 @@ colnames(nano_raw_toxicity_values_mg_l_common_tox)[colnames(nano_raw_toxicity_va
 
 
 ```{r}
-material_test_org_toxicity_value_endpoint <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(y = nanomaterial, x = value, color = test_organism_type,
-                                                    label = test_endpoint, shape = toxicity_measure)) +
+
+nano_raw_toxicity_values_mg_l_common_tox$nanomaterial <- ifelse(
+  nano_raw_toxicity_values_mg_l_common_tox$nanomaterial == "C60 fullerene",
+  "C60",
+  nano_raw_toxicity_values_mg_l_common_tox$nanomaterial
+)
+
+# Define the custom order of nanomaterials
+custom_order <- c("ZnO", "Ag", "TiO2", "CeO2", "CuO", "Fe2O3", "Fe3O4", "C60", "MWCNT", "DWCNT", "SWCNT")
+
+
+# Convert nanomaterial to a factor with custom levels
+nano_raw_toxicity_values_mg_l_common_tox$nanomaterial <- factor(
+  nano_raw_toxicity_values_mg_l_common_tox$nanomaterial,
+  levels = custom_order,
+  ordered = TRUE
+)
+
+# Create the plot
+material_test_org_toxicity_value_endpoint <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, 
+  aes(y = nanomaterial, x = value, color = test_organism_type, shape = toxicity_measure)) +
   geom_point() +
   theme_minimal() +
-  theme(legend.position="none") +
+  theme(legend.position = "none") +
   xlim(0, 1000) +
   scale_color_brewer(palette = "Set3") +
   labs(title = "Toxicity of Nanomaterials (NOEC, LOEC, EC50)",
        y = "Nanomaterial",
-       x = "Toxicity Value up to 250 (mg/L)")
+       x = "Toxicity Dose (mg/L)")
+
 ggplotly(material_test_org_toxicity_value_endpoint)
+
 ```
 
+```{r}
+unique(nano_raw_toxicity_values_mg_l_common_tox$nanomaterial)
+```
 
 
 
@@ -397,27 +421,72 @@ table(nano_raw_toxicity_values_mg_l_common_tox$test_duration_h_or_days)
 
 
 ```{r}
-a <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = test_organism_type,
-                                               y = value,
-                                               fill = test_organism_type,
-                                                label = test_endpoint)) +
+
+
+nano_raw_toxicity_values_mg_l_common_tox$test_organism_type <- ifelse(
+  nano_raw_toxicity_values_mg_l_common_tox$test_organism_type == "Algae",
+  "algae",
+  nano_raw_toxicity_values_mg_l_common_tox$test_organism_type
+)
+
+nano_raw_toxicity_values_mg_l_common_tox$test_organism_type <- ifelse(
+  nano_raw_toxicity_values_mg_l_common_tox$test_organism_type == "mussel",
+  "mussels",
+  nano_raw_toxicity_values_mg_l_common_tox$test_organism_type
+)
+
+nano_raw_toxicity_values_mg_l_common_tox$test_organism_type <- ifelse(
+  nano_raw_toxicity_values_mg_l_common_tox$test_organism_type == "insects",
+  "insect",
+  nano_raw_toxicity_values_mg_l_common_tox$test_organism_type
+)
+
+nano_raw_toxicity_values_mg_l_common_tox$test_organism_type <- ifelse(
+  nano_raw_toxicity_values_mg_l_common_tox$test_organism_type == "Zebrafish",
+  "zebrafish",
+  nano_raw_toxicity_values_mg_l_common_tox$test_organism_type
+)
+
+
+# Define the order of levels for toxicity_measure
+order_levels <- c("NOEC", "LOEC", "EC50")
+
+# Reorder the levels of toxicity_measure
+nano_raw_toxicity_values_mg_l_common_tox$toxicity_measure <- factor(
+  nano_raw_toxicity_values_mg_l_common_tox$toxicity_measure,
+  levels = order_levels
+)
+
+# Reorder the y-axis (test_organism_type) alphabetically
+nano_raw_toxicity_values_mg_l_common_tox$test_organism_type <- factor(
+  nano_raw_toxicity_values_mg_l_common_tox$test_organism_type,
+  levels = rev(unique(nano_raw_toxicity_values_mg_l_common_tox$test_organism_type))
+)
+
+a <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = reorder(test_organism_type, test_organism_type),
+                                                           y = value,
+                                                           fill = test_organism_type,
+                                                           label = test_endpoint)) +
   geom_boxplot() +
-  facet_wrap(~toxicity_measure) +
+  facet_wrap(~toxicity_measure, strip.position = "top") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  theme(legend.position="none") +
+  theme(legend.position = "none") +
   ylim(0, 500) +
-  labs(y = "toxicity value mg/L",
-       x = "test organism") +
+  labs(y = "Toxicity Dose (mg/L)",
+       x = "Test Organism") +
   coord_flip()
 
 ggplotly(a)
+
+
+
 ```
 
 ```{r}
-d <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = name,
+d <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = reorder(nanomaterial, nanomaterial),
                                                y = value,
-                                               fill = name,
+                                               fill = nanomaterial,
                                                 label = test_endpoint)) +
   geom_boxplot() +
   facet_wrap(~toxicity_measure) +
@@ -425,9 +494,33 @@ d <- ggplot(nano_raw_toxicity_values_mg_l_common_tox, aes(x = name,
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   theme(legend.position="none") +
   ylim(0, 1000) +
-  labs(y = "toxicity value mg/L",
-       x = "material") 
+  labs(y = "Concentration (mg/L)",
+       x = "Nanomaterial") +
+  coord_flip()
 
-ggplotly(d)
+d
 ```
+```{r}
+nano_raw_toxicity_values_mg_l_common_tox_bacteria <- nano_raw_toxicity_values_mg_l_common_tox %>% 
+  filter(test_organism_type == "bacteria")
+```
+
+```{r}
+d <- ggplot(nano_raw_toxicity_values_mg_l_common_tox_bacteria, aes(x = test_organism,
+                                               y = value,
+                                               fill = nanomaterial,
+                                                label = test_endpoint)) +
+  geom_boxplot() +
+  facet_wrap(~toxicity_measure) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(legend.position="none") +
+  ylim(0, 1000) +
+  labs(y = "Concentration (mg/L)",
+       x = "Nanomaterial") +
+  coord_flip()
+
+d
+```
+
 
