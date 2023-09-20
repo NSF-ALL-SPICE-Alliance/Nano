@@ -1,5 +1,5 @@
 ---
-title: "Aggregation and Clustering"
+title: "Aggregation and Test Organisms Prone to Effect"
 author: "Connor Flynn"
 date: "9/7/2023"
 output: html_document
@@ -80,35 +80,43 @@ categorize_toxicity_measure <- function(measure) {
 aggregated_nano_e_tox <- nano_e_tox
 
 # Apply the categorization function to the toxicity_measure column
-aggregated_nano_e_tox$toxicity_measure <- sapply(nano_e_tox$toxicity_measure, categorize_toxicity_measure)
+aggregated_nano_e_tox$toxicity_aggregate <- sapply(nano_e_tox$toxicity_measure, categorize_toxicity_measure)
 ```
 
 
 ```{r}
-table(aggregated_nano_e_tox$toxicity_measure)
+aggregated_nano_e_tox %>% 
+  select(toxicity_aggregate, toxicity_measure)
 ```
+
+
+```{r}
+table(aggregated_nano_e_tox$toxicity_aggregate)
+```
+
+
 ```{r}
 effect_aggregate <- c("effect", "no_effect")
 
 aggregated_nano_e_tox <- aggregated_nano_e_tox %>% 
-  filter(toxicity_measure %in% effect_aggregate)
+  filter(toxicity_aggregate %in% effect_aggregate)
 ```
 
 
-```{r}
+```{r, include=FALSE}
 table(aggregated_nano_e_tox$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)
 ```
 
 
 
-```{r}
+```{r, include=FALSE}
 table(aggregated_nano_e_tox$test_endpoint)
 ```
 
 
 
 ```{r}
-ggplot(aggregated_nano_e_tox, aes(x = name, fill = toxicity_measure)) +
+ggplot(aggregated_nano_e_tox, aes(x = name, fill = toxicity_aggregate)) +
   geom_bar() +
   coord_flip() +
   theme_minimal()
@@ -122,6 +130,105 @@ What nanomaterials are acting the most similarly in this dataset?
 
 
 
-What is the test endpoint with the highest vulnerability for each nanomaterial?
+*What is the test endpoint with the highest vulnerability for each nanomaterial?*
 
+Seperate numeric values and units into 2 separate columns
+- value
+- unit
+
+Raw values only 
+
+```{r}
+aggregated_nano_e_tox_raw_values <- subset(aggregated_nano_e_tox, !grepl("\\(|±|-|>|<|≤|%|~", toxicity_value))
+```
+
+
+```{r}
+aggregated_nano_e_tox_raw_values <- aggregated_nano_e_tox_raw_values %>% 
+  mutate(value = str_extract(toxicity_value, "[0-9.]+([ ][0-9.]+)?"),
+         unit = str_extract(toxicity_value, "[^0-9.]+"))
+```
+
+
+```{r}
+aggregated_nano_e_tox_raw_values %>% 
+  select(toxicity_value, value, unit)
+```
+
+```{r}
+table(aggregated_nano_e_tox_raw_values$unit)
+```
+
+```{r}
+aggregated_nano_e_tox_raw_values$unit <- trimws(aggregated_nano_e_tox_raw_values$unit)
+```
+
+```{r}
+aggregated_nano_e_tox_raw_values_ml <- aggregated_nano_e_tox_raw_values %>% 
+  filter(unit == "mg/L")
+```
+
+
+
+```{r}
+result <- aggregated_nano_e_tox_raw_values_ml %>%
+  filter(toxicity_aggregate == "effect") %>%
+  group_by(name) %>%
+  summarize(
+    min_value = min(value, na.rm = TRUE),
+    test_organism = first(test_organism)  # Add this line to get the test_organism value
+  )
+result
+```
+
+
+Heat Map
+
+```{r}
+aggregated_nano_e_tox_raw_values_ml %>% 
+  select(name, test_organism, value, toxicity_aggregate)
+```
+
+```{r}
+
+# Assuming 'value' is not numeric, convert it to numeric
+aggregated_nano_e_tox_raw_values_ml$value <- as.numeric(aggregated_nano_e_tox_raw_values_ml$value)
+
+# Your ggplot code
+ggplot(aggregated_nano_e_tox_raw_values_ml, aes(x = name, y = test_organism, fill = value)) +
+  geom_tile() +
+  facet_wrap(~toxicity_aggregate) +
+  theme(legend.position = "none") +
+  theme_minimal() +
+  
+  # Specify a continuous color scale
+  scale_fill_gradient(low = "blue", high = "red")  # You can customize the colors as needed
+
+```
+```{r}
+ggplot(data = aggregated_nano_e_tox_raw_values_ml, aes(x = value)) +
+  geom_histogram(bins = 300)
+```
+
+
+
+Alii Idea 
+
+```{r}
+test_orgs <- as.data.frame(table(aggregated_nano_e_tox_raw_values_ml$test_organism))
+```
+
+```{r}
+type_test_orgs <- as.data.frame(table(aggregated_nano_e_tox_raw_values_ml$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other))
+```
+
+
+```{r}
+bacteria <- aggregated_nano_e_tox_raw_values_ml %>% 
+  filter(type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other == "bacteria")
+```
+
+```{r}
+bacteria_test_orgs <- as.data.frame(table(bacteria$test_organism))
+```
 
