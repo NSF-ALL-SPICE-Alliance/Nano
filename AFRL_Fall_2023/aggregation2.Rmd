@@ -1,0 +1,626 @@
+---
+title: "Aggregation and Test Organisms Prone to Effect"
+author: "Connor Flynn + Maverick Kaopio"
+date: "9/7/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(tidyverse)
+library(janitor)
+library(naniar)
+library(plotly)
+library(dplyr)
+library(ggpubr)
+library(caret) # predictive modeling
+library(ggplot2)
+library(purrr)
+options(scipen = 99)
+```
+
+Read in Data
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+nano_e_tox <- read_csv(here("data/Beilstein_J_Nanotechnol-06-1788-s002/NanoE-Tox-database.csv"))
+```
+
+Select columns up to column 35 (the rest are blank)
+
+```{r}
+nano_e_tox <- nano_e_tox[, 1:35]
+```
+
+Clean Column Names
+
+```{r}
+nano_e_tox <- nano_e_tox %>% 
+  clean_names()
+```
+
+Missingness 
+
+```{r}
+gg_miss_var(nano_e_tox)
+```
+
+
+Explore the toxicity value column
+
+```{r}
+class(nano_e_tox$toxicity_value)
+```
+
+Change the class of toxicity_value to factor
+
+```{r}
+nano_e_tox$toxicity_value <- as.factor(nano_e_tox$toxicity_value)
+```
+
+
+EC = Effect Concentration
+LC = Lethal Concentration
+NOEC = No Observed Effect Concentration
+LOEC = Lowest Observed Effect Concentration
+IC = Inhibitory Concentration
+
+
+Create a function to aggregate with ChatGPT
+
+```{r}
+categorize_toxicity_measure <- function(measure) {
+  if (grepl("^E|^L|^I", measure)) {
+    return("effect")
+  } else if (grepl("^N", measure)) {
+    return("no_effect")
+  } else {
+    return(measure)
+  }
+}
+```
+
+
+```{r}
+aggregated_nano_e_tox <- nano_e_tox
+
+# Apply the categorization function to the toxicity_measure column
+aggregated_nano_e_tox$toxicity_aggregate <- sapply(nano_e_tox$toxicity_measure, categorize_toxicity_measure)
+```
+
+
+```{r}
+aggregated_nano_e_tox %>% 
+  select(toxicity_aggregate, toxicity_measure)
+```
+
+
+```{r}
+table(aggregated_nano_e_tox$toxicity_aggregate)
+```
+
+
+```{r}
+effect_aggregate <- c("effect", "no_effect")
+
+aggregated_nano_e_tox <- aggregated_nano_e_tox %>% 
+  filter(toxicity_aggregate %in% effect_aggregate)
+```
+
+
+```{r, include=FALSE}
+table(aggregated_nano_e_tox$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)
+```
+
+
+
+```{r, include=FALSE}
+table(aggregated_nano_e_tox$test_endpoint)
+```
+
+
+
+```{r}
+ggplot(aggregated_nano_e_tox, aes(x = name, fill = toxicity_aggregate)) +
+  geom_bar() +
+  coord_flip() +
+  theme_minimal()
+```
+
+
+What nanomaterials are acting the most similarly in this dataset? 
+- Can this data answer that question?
+
+
+
+
+
+*What is the test endpoint with the highest vulnerability for each nanomaterial?*
+
+Seperate numeric values and units into 2 separate columns
+- value
+- unit
+
+Raw values only 
+
+```{r}
+aggregated_nano_e_tox_raw_values <- subset(aggregated_nano_e_tox, !grepl("\\(|±|-|>|<|≤|%|~", toxicity_value))
+```
+
+
+```{r}
+aggregated_nano_e_tox_raw_values <- aggregated_nano_e_tox_raw_values %>% 
+  mutate(value = str_extract(toxicity_value, "[0-9.]+([ ][0-9.]+)?"),
+         unit = str_extract(toxicity_value, "[^0-9.]+"))
+```
+
+
+```{r}
+aggregated_nano_e_tox_raw_values %>% 
+  select(toxicity_value, value, unit)
+```
+
+```{r}
+table(aggregated_nano_e_tox_raw_values$unit)
+```
+
+```{r}
+aggregated_nano_e_tox_raw_values$unit <- trimws(aggregated_nano_e_tox_raw_values$unit)
+```
+
+```{r}
+aggregated_nano_e_tox_raw_values_ml <- aggregated_nano_e_tox_raw_values %>% 
+  filter(unit == "mg/L")
+```
+
+
+
+```{r}
+result <- aggregated_nano_e_tox_raw_values_ml %>%
+  filter(toxicity_aggregate == "effect") %>%
+  group_by(name) %>%
+  summarize(
+    min_value = min(value, na.rm = TRUE),
+    test_organism = first(test_organism)  # Add this line to get the test_organism value
+  )
+result
+```
+
+
+Heat Map
+
+```{r}
+aggregated_nano_e_tox_raw_values_ml %>% 
+  select(name, test_organism, value, toxicity_aggregate)
+```
+
+```{r}
+# Assuming 'value' is not numeric, convert it to numeric
+aggregated_nano_e_tox_raw_values_ml$value <- as.numeric(aggregated_nano_e_tox_raw_values_ml$value)
+
+```
+
+
+
+```{r}
+ggplot(data = aggregated_nano_e_tox_raw_values_ml, aes(x = value)) +
+  geom_histogram(bins = 300)
+```
+Mav input***
+
+```{r}
+# Arrange the data by toxicity_aggregate and value in ascending order
+# Then, add a rank column based on value within each sample_organism grouping
+toxicity_category_list_full <- aggregated_nano_e_tox_raw_values_ml %>%
+  filter(toxicity_aggregate == "effect") %>% 
+  group_by(test_organism) %>% 
+  arrange(test_organism, value) %>%
+  mutate(rank = rank(value)) %>%
+  select(test_organism, name, value, rank, toxicity_aggregate) %>% 
+  mutate(rank = factor(rank)) # convert to discrete from continuous
+
+# Display the resulting dataframe
+toxicity_category_list <- toxicity_category_list_full %>%
+  filter(rank == 1 | rank == 1.5)
+
+toxicity_category_list
+```
+Same in philosopy to connor; just different method. Gonna toss anything thats > 1.5 ; keeping 1, and points of contention between chemicals @ same dose.
+```{r}
+plot <- ggplot(data = toxicity_category_list, aes(x = name , y = test_organism, label = value, fill = rank)) +
+  geom_point(size = 1, shape = 21) +
+  geom_smooth() +
+  labs(title = "Toxicity level scale (dose)",
+       x = "Toxicity",
+       y = "Organism") +
+  theme(axis.text.y = element_text(size = 4))
+
+plotly_plot <- ggplotly(plot)
+plotly_plot
+```
+^ ranking based on toxicity concentration; now we should try to establish relative toxicity? because we may have some chemicals that were just not tested on an organism? perhaps an opportunity to use machine learning to predict if a chemical might damage another one in a similar family? idk.
+
+```{r}
+plot_2 <- ggplot(toxicity_category_list, aes(x = rank , y = test_organism, fill = log(value), label = value)) +
+  geom_tile() +
+  facet_wrap(~name) +
+  theme(legend.position = "none") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 1)) +
+  scale_fill_gradient(low = "blue", high = "red")
+
+plotly_plot <- ggplotly(plot_2)
+plotly_plot
+```
+From this, we can blatantly see that some chemicals are very much more dangerous than others based on the data that we have; albeit this is relative to one another. We could make the assumption that because the poison makes the dose, there should be toxicity for all chemicals; difference being just the scale of the dose; something that can be emulated using machine learning perhaps?
+
+Recombine this new data with the old data as a merge; just want the rank.
+```{r}
+aggregated_nano_e_tox_raw_values_ml_ranked <- left_join(aggregated_nano_e_tox_raw_values_ml, 
+                    toxicity_category_list_full %>% select(rank), 
+                    by = "test_organism")
+```
+^this error is true since I'd used grouping for the test_organism & the chemical & the value of the chemical to determine rank. Added back in all the rankings; not just minimum. might paint a better picture down the road perhaps for chemicals that had an effect, but were just not as effective. Perhaps these have different applications.
+```{r}
+aggregated_nano_e_tox_raw_values_ml_ranked
+```
+
+```{r}
+# Filter the data
+aggregated_nano_e_tox_raw_values_ml_ranked_outliers <- aggregated_nano_e_tox_raw_values_ml_ranked %>%
+  filter(value < 10000)
+
+# Calculate the mean of the "value" column by grouping
+aggregated_nano_e_tox_raw_values_ml_ranked_outliers_mean <- aggregated_nano_e_tox_raw_values_ml_ranked_outliers %>% 
+  group_by(name, test_organism, toxicity_aggregate) %>%
+  summarise(mean_value_dose = mean(as.numeric(value), na.rm = TRUE))
+
+# Display the resulting dataframe
+aggregated_nano_e_tox_raw_values_ml_ranked_outliers_mean
+```
+
+```{r}
+# Fill colors
+fill_colors <- c('effect' = 'red', 'no_effect' = 'green') # Would be fun to maybe see if there was some sort of beneficial effect/paint blue?
+
+# Create the initial ggplot plot with updated fill colors
+plot <- ggplot(data = aggregated_nano_e_tox_raw_values_ml_ranked_outliers_mean, 
+               aes(x = mean_value_dose, y = test_organism, label = name, fill = toxicity_aggregate)) +
+  aes(shape = 'test_organism') +
+  geom_point(size = 1, shape = 21) +
+  geom_smooth() +
+  stat_cor(method = "pearson", output.type = "text", label.sep = '\n', label.x = 20) +
+  labs(title = "Relationship",
+       x = "Toxicity",
+       y = "Organism") +
+  theme_minimal() +
+  scale_fill_manual(values = fill_colors) +
+  theme(axis.text.y = element_text(size = 5))  # Adjust the size of y-axis text
+
+ggplotly(plot)
+
+```
+Add this back to the OG dataframe
+
+```{r}
+aggregated_nano_e_tox_raw_values_ml_ranked_summarized <- left_join(
+  aggregated_nano_e_tox_raw_values_ml_ranked,
+  aggregated_nano_e_tox_raw_values_ml_ranked_outliers_mean,
+  by = c("name","test_organism", "toxicity_aggregate")
+)
+```
+Had chatGPT generate some code to gauge relative size of things to add to the dataframe:
+```{r}
+# unique(aggregated_nano_e_tox_raw_values_ml_ranked_summarized$test_organism)
+# Create a mapping from instance names to size categories
+size_mapping <- c(
+  "Chlorella sp." = "microscopic",
+  "Hyalella azteca" = "small",
+  "Chironomus dilutus" = "small",
+  "rice" = "small",
+  "Amphiascus tenuiremis" = "small",
+  "Ceriodaphnia dubia" = "small",
+  "Escherichia coli" = "microscopic",
+  "P.aeruginosa" = "microscopic",
+  "B.subtilis" = "microscopic",
+  "S.aureus" = "microscopic",
+  "Pseudokirchneriella subcapitata" = "microscopic",
+  "Danio rerio" = "small",
+  "Oncorhynus mykiss" = "small",
+  "Ambystoma mexicanum" = "medium",
+  "Xenopus laevis" = "medium",
+  "Escherichia coli MG1655" = "microscopic",
+  "Cupriavididus metallidurans CH34" = "microscopic",
+  "Cucurbita pepo" = "medium",
+  "Thalassiosira pseudonana" = "microscopic",
+  "Tigriopus  japonicus" = "small",
+  "Oryzias  melastigma" = "small",
+  "Xenopus larvae" = "medium",
+  "Dunaliella tertiolecta" = "microscopic",
+  "Chlorella vulgaris" = "microscopic",
+  "Oreochromis niloticus" = "small",
+  "Daphnia similis" = "small",
+  "Mytilus galloprovincialis" = "medium",
+  "Daphnia magna" = "small",
+  "Bacillus stearothermophilus" = "microscopic",
+  "Lemna gibba" = "small",
+  "Vibrio fischeri" = "microscopic",
+  "Thamnocephalus platyurus" = "small",
+  "Lolium perenne" = "medium",
+  "Caenorhabditis elegans" = "small",
+  "E. coli O111" = "microscopic",
+  "Escherichia coli K12 DH10B" = "microscopic",
+  "Bodo saltans" = "microscopic",
+  "Ceriodaphnia affinis" = "small",
+  "Lepidium sativum" = "small",
+  "Pseudomonas putida BS566::luxCDABE" = "microscopic",
+  "Caenorhabditis elegans Bristol strain N2" = "small",
+  "Daphnia pulex" = "small",
+  "Chironomus riparius" = "small",
+  "Nitzschia palea" = "microscopic",
+  "Pleurodeles waltl" = "medium",
+  "Cucumis sativus" = "medium",
+  "Lactuca sativa" = "medium",
+  "anaerobic bacteria" = "microscopic",
+  "Pseudomonas putida OUS 82" = "microscopic",
+  "Pimephales promelas" = "small",
+  "Oncorhynchus mykiss" = "small",
+  "Drosophila melanogaster" = "small",
+  "flax (Linum usitatissimum L., cv. Electra)" = "medium",
+  "ryegrass (Lolium perenne L., cv. Tove)" = "medium",
+  "two-rowed barley (Hordeum vulgare L., cv. Annabell)" = "medium",
+  "tomato (Lycopersicum esculentum)" = "medium",
+  "corn (Zea mays)" = "medium",
+  "Pseudomonas chlororaphis O6" = "microscopic",
+  "Cucurbita pepo subspecies ovifera (yellow squash)" = "medium",
+  "Caenorhabditis elegans mtl-2 mutant" = "small",
+  "Caenorhabditis elegans sod-3 mutant" = "small",
+  "Caenorhabditis elegans daf-12 mutant" = "small",
+  "Lumbricus terrestris" = "medium",
+  "Arabidopsis thaliana" = "medium",
+  "bacterioplankton" = "microscopic",
+  "Eisenia fetida" = "small",
+  "Acuatic Chironomus riparius" = "small",
+  "Desmodesmus subspicatus" = "microscopic",
+  "Cyprinus carpio" = "small",
+  "Triticum aestivum spp" = "medium",
+  "return activated sludge) from Northwest Wastewater Treatment Plant in Mesa, Arizona" = "medium",
+  "Eisenia andrei" = "small",
+  "Lemna Minor" = "small",
+  "Dreissena polymorpha" = "medium",
+  "Triticum aestivum" = "medium",
+  "Gammarus fossarum" = "small",
+  "Anabaena variabilis" = "microscopic",
+  "Haliotis diversicolor supertexta" = "medium",
+  "Scenedesmus sp" = "microscopic",
+  "Chlorella sp" = "microscopic",
+  "Lytechinus pictus" = "medium",
+  "Chlamydomonas reinhardtii" = "microscopic",
+  "Phaeodactylum tricornutum" = "microscopic",
+  "Brachionus plicatilis" = "microscopic",
+  "Lemna minor" = "small",
+  "Montastraea faveolata" = "medium",
+  "Caenorhabditis elegans wild-type Maupus, N2 var. Bristol" = "small",
+  "Tetrahymena thermophila" = "microscopic",
+  "Allogamus ligonifer" = "small",
+  "Schoenoplectus tabernaemontani" = "medium",
+  "Cucumis sativus (cucumber)" = "medium",
+  "Lactuca sativa (lettuce)" = "medium"
+)
+
+# Microscopic: Organisms that are typically too small to be seen without a microscope. Examples include bacteria (Escherichia coli), some algae (Chlorella sp.), and certain microorganisms.
+
+# Small: Organisms that are larger than microscopic but still relatively small in size. Examples include small aquatic organisms (Daphnia magna, Pimephales promelas), small insects (Chironomus dilutus), and small plants (Lepidium sativum).
+
+# Medium: Organisms that are of moderate size and can be seen with the naked eye. Examples include medium-sized aquatic organisms (Mytilus galloprovincialis, Ambystoma mexicanum), some plants (Cucumis sativus), and certain small animals (Gammarus fossarum).
+
+# Large: Organisms that are relatively large in size and easily visible without magnification. Examples include large aquatic organisms (Oncorhynchus mykiss), larger animals (Danio rerio, Xenopus laevis), and medium-sized plants (Arabidopsis thaliana).
+
+# Add the SizeCategory column based on the mapping
+aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized <- 
+  aggregated_nano_e_tox_raw_values_ml_ranked_summarized %>%
+  mutate(organism_relative_size = size_mapping[test_organism])
+
+aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized
+```
+Dose relative to size?
+
+```{r}
+
+plot <- ggplot(data = aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized, aes(x = name, y = log(value), fill = toxicity_aggregate)) +
+  geom_point(size = 1, shape = 21) +
+  geom_smooth() +
+  labs(title = "",
+       x = "Chemical Name",
+       y = "Log(Value)") +
+  facet_grid(. ~ organism_relative_size) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = fill_colors)
+
+ggplotly(plot)
+```
+any toxicity specific to a species.....?
+Need to standardize some of the wording:
+```{r}
+unique(aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)
+# Gotta manually replace the weird stuff
+name_replacements <- c("Algae" = "algae",
+                       "mussels" = "mussel",
+                       "insects" = "insect",
+                       "amphipod" = "crustacean",
+                       "water flea" = "crustacean",
+                       "midge" = "insect",
+                       "cyanobacteria" = "algae",
+                       "meiobenthic copoepod" = "crustacean",
+                       "Zebrafish" = "fish"
+                       )
+
+aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other <- 
+  ifelse(aggregated_nano_e_tox_raw_values_ml_ranked_summarized$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other %in% names(name_replacements),
+         name_replacements[aggregated_nano_e_tox_raw_values_ml_ranked_summarized$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other],
+         aggregated_nano_e_tox_raw_values_ml_ranked_summarized$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other)
+
+# then regroup things based on larger context since we have the exacts already
+map_to_broad_category <- function(term) {
+  case_when(
+    term %in% c("algae", "plant") ~ "Plants",
+    term %in% c("crustacean", "fish", "mussel", "snail", "sea urchin") ~ "Aquatic Animals",
+    term %in% c("insect", "amphibian", "earthworm") ~ "Terrestrial Animals",
+    term %in% c("bacteria", "nematode", "protozoa", "rotifer") ~ "Microorganisms",
+    term == "coral" ~ "Coral",
+    TRUE ~ "Other"
+  )
+}
+
+# make broad categories in a new column
+aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized %>%
+  mutate(broad_grouping = map_to_broad_category(type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other))
+```
+
+```{r}
+plot <- ggplot(data = aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized, aes(x = name, y = log(value), fill = toxicity_aggregate)) +
+  geom_point(size = 1, shape = 21) +
+  labs(title = "",
+       x = "Chemical Name",
+       y = "Log(Value)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = fill_colors) +
+  facet_wrap(~broad_grouping)
+
+
+ggplotly(plot)
+```
+
+
+
+I want to generate predictive data based on the data we have that may indicate if a chemical may be poisonous at a different dose:
+name, test_organism, effect, value, rank, mean_value_dose
+
+```{r}
+# Filter data for organisms within the designated families
+data_missing <- data[data$type_of_test_organism_selection %in% c("bacteria", "algae", "crustacean", "protozoa", "fish", "earthworm", "other"), ]
+data_observed <- data[!data$type_of_test_organism_selection %in% c("bacteria", "algae", "crustacean", "protozoa", "fish", "earthworm", "other"), ]
+
+# Encode 'toxicity_aggregate' column as binary (1 for 'kill', 0 for 'no_kill')
+aggregated_nano_e_tox_raw_values_ml_ranked_summarized$effect_binary <- ifelse(aggregated_nano_e_tox_raw_values_ml_ranked_summarized$toxicity_aggregate == "effect", 1, 0)
+
+# Build a linear regression model using observed data
+model <- lm(kill ~ toxicity_aggregate + initial_coating_functionalization + shape, data = data_observed)
+
+# Make predictions for missing data
+data_missing$predicted_toxicity <- predict(model, newdata = data_missing)
+
+```
+
+```{r}
+# Data pre-processing
+# Encode 'toxicity_aggregate' column as binary (1 for 'kill', 0 for 'no_kill')
+aggregated_nano_e_tox_raw_values_ml_ranked_summarized$effect_binary <- ifelse(aggregated_nano_e_tox_raw_values_ml_ranked_summarized$toxicity_aggregate == "effect", 1, 0)
+
+# Split the data into training and testing sets
+set.seed(369)  # for reproducibility
+train_index <- createDataPartition(aggregated_nano_e_tox_raw_values_ml_ranked_summarized$effect_binary, p = 0.7, list = FALSE)
+train_data <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized[train_index, ]
+test_data <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized[-train_index, ]
+
+# Build a logistic regression model
+logistic_model <- glm(effect_binary ~ value + rank, data = train_data, family = "binomial")
+
+# Make predictions on the test data
+predicted_probs <- predict(logistic_model, newdata = test_data, type = "response")
+predicted_classes <- ifelse(predicted_probs > 0.5, "kill", "no_kill")
+
+# Ensure the vectors have the same length
+if (length(predicted_classes) != nrow(test_data)) {
+  stop("Lengths of predicted_classes and test_data do not match.")
+}
+
+# Evaluate the model
+confusion_matrix <- table(predicted = predicted_classes, actual = test_data$toxicity_aggregate)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+print(paste("Accuracy:", accuracy))
+```
+```{r}
+# Visualize the results
+ggplot(data = rbind(test_data, generated_data), aes(x = value, y = rank, color = toxicity_aggregate, label = name)) +
+  geom_point() +
+  geom_contour(aes(z = predicted_probs), bins = 10) +
+  labs(title = "Predicted Effect",
+       x = "Dose",
+       y = "Toxicity Rank") +
+  theme_minimal() +
+  facet_wrap(~data_source, nrow = 1)
+```
+
+
+now I want a line graph? maybe with the general data points located on the line (which represents the mean...?)
+```{r}
+line_plot <- ggplot(aggregated_nano_e_tox_raw_values_ml_ranked_summarized, aes(x = name, y = mean_value_dose)) +
+  geom_line() +           # Add a line connecting the means
+  geom_point(size = 3) +  # Add points on the line
+  labs(title = "Line Graph with Data Points",
+       x = "Name",
+       y = "Mean Value") +
+  theme_minimal()         # Use a minimal theme for a clean look
+
+print(line_plot)
+```
+
+
+1) Heatmap project of rank to organisms to find deadliest chemical to dose ratio, and also what is least deadliest
+2) then see if I can push the list to GPT or find another data list to add to mine that talks about human toxicity to overlap with what Ali'i was thinking.
+3) Would be good to maybe intersect the general toxicity trends/ ranked toxicity lists both into a new dataframe that includes the non-toxic, and denotes non-toxic as all being a null value? or maybe 0 since its a scale of 1, and up?
+size of particle * concentration and then designate shape based on its shape again, on the 3d graph?
+
+
+
+**** shoved all my old comments from other file to this one instead. similar work was done to split everything, etc.
+
+What nanomaterials are acting the most similarly in this dataset? 
+- Can this data answer that question?
+
+Should be able to; just need to:
+1) Look at scoring, and the range for each category of effect
+2) For each chemical: Classify that impact as low/ med/ high? 1/3:1/3:1/3? (simpler alternative)
+OR K-means for each? then select the highest group
+
+3) Do this for all columns
+4) Alias and select only the high impact columns/values for each chemical?
+5) Rate them based on relative impact to one another/scale, to determine highest to lowest impact.
+
+* There appears to be an error in the encoding of numbers in the diamerter_nm column to dates, and some in length_nm as well
+
+Look at when toxicity_measure = effect, establish the scale of effect, then apply back the statistics of what percentage had and didnt as a weight?
+
+^ Better Classify the data down to the shape and size? How granular does it need to be?
+Either way, I can just average all the data between what lived and died, and t-test it all perhaps.
+
+
+
+What is the test endpoint with the highest vulnerability for each nanomaterial?
+
+
+
+
+
+Alii Idea 
+
+```{r}
+test_orgs <- as.data.frame(table(aggregated_nano_e_tox_raw_values_ml$test_organism))
+```
+
+```{r}
+type_test_orgs <- as.data.frame(table(aggregated_nano_e_tox_raw_values_ml$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other))
+```
+
+
+```{r}
+bacteria <- aggregated_nano_e_tox_raw_values_ml %>% 
+  filter(type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other == "bacteria")
+```
+
+```{r}
+bacteria_test_orgs <- as.data.frame(table(bacteria$test_organism))
+```
+
