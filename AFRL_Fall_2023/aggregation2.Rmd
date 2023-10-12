@@ -17,6 +17,7 @@ library(ggpubr)
 library(caret) # predictive modeling
 library(ggplot2)
 library(purrr)
+library(randomForest)  # For RandomForest classifier
 options(scipen = 99)
 ```
 
@@ -488,94 +489,94 @@ plot <- ggplot(data = aggregated_nano_e_tox_raw_values_ml_ranked_summarized_size
   scale_fill_manual(values = fill_colors) +
   facet_wrap(~broad_grouping)
 
-
 ggplotly(plot)
 ```
-
-
 
 I want to generate predictive data based on the data we have that may indicate if a chemical may be poisonous at a different dose:
 name, test_organism, effect, value, rank, mean_value_dose
 
 ```{r}
-# Filter data for organisms within the designated families
-data_missing <- data[data$type_of_test_organism_selection %in% c("bacteria", "algae", "crustacean", "protozoa", "fish", "earthworm", "other"), ]
-data_observed <- data[!data$type_of_test_organism_selection %in% c("bacteria", "algae", "crustacean", "protozoa", "fish", "earthworm", "other"), ]
+# Removing missing values
+missing_values <- colSums(is.na(aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized[, c('name', 'broad_grouping', 'test_organism', 'value','toxicity_aggregate')]))
 
-# Encode 'toxicity_aggregate' column as binary (1 for 'kill', 0 for 'no_kill')
-aggregated_nano_e_tox_raw_values_ml_ranked_summarized$effect_binary <- ifelse(aggregated_nano_e_tox_raw_values_ml_ranked_summarized$toxicity_aggregate == "effect", 1, 0)
+# Print the counts of missing values
+print(missing_values)
 
-# Build a linear regression model using observed data
-model <- lm(kill ~ toxicity_aggregate + initial_coating_functionalization + shape, data = data_observed)
-
-# Make predictions for missing data
-data_missing$predicted_toxicity <- predict(model, newdata = data_missing)
-
+# Remove rows with missing values in 'value' column
+aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized[complete.cases(aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized[, c('name', 'broad_grouping', 'test_organism', 'value','toxicity_aggregate')]), ]
 ```
 
 ```{r}
-# Data pre-processing
-# Encode 'toxicity_aggregate' column as binary (1 for 'kill', 0 for 'no_kill')
-aggregated_nano_e_tox_raw_values_ml_ranked_summarized$effect_binary <- ifelse(aggregated_nano_e_tox_raw_values_ml_ranked_summarized$toxicity_aggregate == "effect", 1, 0)
+# Select specific columns and create a new dataframe 'df'
+df <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized[, c('name', 'broad_grouping', 'test_organism', 'value', 'toxicity_aggregate')]
+
+# Set a seed for reproducibility
+set.seed(42)
 
 # Split the data into training and testing sets
-set.seed(369)  # for reproducibility
-train_index <- createDataPartition(aggregated_nano_e_tox_raw_values_ml_ranked_summarized$effect_binary, p = 0.7, list = FALSE)
-train_data <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized[train_index, ]
-test_data <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized[-train_index, ]
+test_proportion <- 0.2
+num_rows <- nrow(df)
+num_test <- round(num_rows * test_proportion)
 
-# Build a logistic regression model
-logistic_model <- glm(effect_binary ~ value + rank, data = train_data, family = "binomial")
+# Generate random indices for the testing set
+test_indices <- sample(seq_len(num_rows), size = num_test)
 
-# Make predictions on the test data
-predicted_probs <- predict(logistic_model, newdata = test_data, type = "response")
-predicted_classes <- ifelse(predicted_probs > 0.5, "kill", "no_kill")
+# Create the training and testing data frames
+train_df <- df[-test_indices, ]
+test_df <- df[test_indices, ]
 
-# Ensure the vectors have the same length
-if (length(predicted_classes) != nrow(test_data)) {
-  stop("Lengths of predicted_classes and test_data do not match.")
+# Step 3: Train a machine learning model
+X_train <- train_df[, c('broad_grouping', 'test_organism', 'name', 'toxicity_aggregate', 'value')]
+y_train <- train_df$value
+
+# Create the RandomForest model
+model <- randomForest(y_train ~ ., data = train_df, ntree = 100, random_state = 42)
+
+# Step 4: Evaluate the model
+X_test <- test_df[, c('broad_grouping', 'test_organism', 'name', 'toxicity_aggregate','value')]
+y_test <- test_df$value
+
+# Make predictions using the trained model
+y_pred <- predict(model, newdata = X_test)
+
+# Calculate accuracy
+accuracy <- sum(y_test == y_pred) / length(y_test)
+print(paste("Accuracy on the test set:", round(accuracy, 2)))
+
+# Define a list of test organisms to make predictions
+target_organisms <- c("bacteria", "algae", "crustacean", "protozoa", "fish", "earthworm", "other")
+
+# Create an empty list to store predictions for each organism
+predictions_list <- list()
+
+# Iterate through each organism and make predictions
+for (organism in target_organisms) {
+  # Filter the data frame for the current organism
+  organism_df <- test_df[test_df$test_organism == organism, c('broad_grouping', 'test_organism', 'name', 'toxicity_aggregate', 'value')]
+  
+  # Make predictions for the current organism
+  predictions <- predict(model, newdata = organism_df)
+  
+  # Store the predictions in the list
+  predictions_list[[organism]] <- predictions
 }
 
-# Evaluate the model
-confusion_matrix <- table(predicted = predicted_classes, actual = test_data$toxicity_aggregate)
-accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
-print(paste("Accuracy:", accuracy))
-```
-```{r}
-# Visualize the results
-ggplot(data = rbind(test_data, generated_data), aes(x = value, y = rank, color = toxicity_aggregate, label = name)) +
-  geom_point() +
-  geom_contour(aes(z = predicted_probs), bins = 10) +
-  labs(title = "Predicted Effect",
-       x = "Dose",
-       y = "Toxicity Rank") +
-  theme_minimal() +
-  facet_wrap(~data_source, nrow = 1)
+predictions_list[['bacteria']]
 ```
 
+7) Density = size of nanomaterial * Dose? Then Graph that in 3d
 
-now I want a line graph? maybe with the general data points located on the line (which represents the mean...?)
-```{r}
-line_plot <- ggplot(aggregated_nano_e_tox_raw_values_ml_ranked_summarized, aes(x = name, y = mean_value_dose)) +
-  geom_line() +           # Add a line connecting the means
-  geom_point(size = 3) +  # Add points on the line
-  labs(title = "Line Graph with Data Points",
-       x = "Name",
-       y = "Mean Value") +
-  theme_minimal()         # Use a minimal theme for a clean look
-
-print(line_plot)
-```
-
-
+Overall Plan:
 1) Heatmap project of rank to organisms to find deadliest chemical to dose ratio, and also what is least deadliest
-2) then see if I can push the list to GPT or find another data list to add to mine that talks about human toxicity to overlap with what Ali'i was thinking.
+2) then see if I can push the list to GPT or find another data list to add to mine that talks about human toxicity to overlap with what Ali'i was thinking. merge w/ ali'i's consolidation of names concept, then see applicability for antibiotics/ anti-microbial sprays? Just keeping to the bacteria group of course.
 3) Would be good to maybe intersect the general toxicity trends/ ranked toxicity lists both into a new dataframe that includes the non-toxic, and denotes non-toxic as all being a null value? or maybe 0 since its a scale of 1, and up?
 size of particle * concentration and then designate shape based on its shape again, on the 3d graph?
+4) curious about if particles may have a positive effect as well
+5) create machine learning model to create new data points for future testing; using individual datapoints and the means (or median better?).
+6) 2 dendrograms; one for materials, and the others for organisms, then intersect them?
 
 
 
-**** shoved all my old comments from other file to this one instead. similar work was done to split everything, etc.
 
 What nanomaterials are acting the most similarly in this dataset? 
 - Can this data answer that question?
@@ -600,27 +601,35 @@ Either way, I can just average all the data between what lived and died, and t-t
 
 What is the test endpoint with the highest vulnerability for each nanomaterial?
 
+Ideas List:
+
+Simplest idea was just using nanoparticles as a good surface cleaner. Think Ali'i brought that one up. Can't remember.
+
+could we filter water using high zeta potential, low toxicity nanoparticles? maybe in combonation with a solar still? figure out what size/kinds of particles dont transfer in steam vapor?
+
+https://link.springer.com/article/10.1007/s10311-023-01626-x
+https://www.sciencedirect.com/science/article/pii/S0048969721049135
 
 
 
+Maybe nano particles can be paired to help remove one another from a solvent? just used to clean something, then 
 
-Alii Idea 
+How about a better smoke grenade that works against thermal from jets? Look at stuff thats not toxic to humans in large doses, then determine the refractive index of the nano particles? Perhaps that also will not burn? then look at the high zeta materials which would distribute well in a mix, then determine what a mix would need. "Aerosol of burning phosphorus particles is an effective obscurant against thermal imagingsystems. However, this effect is short-lived. After the phosphorus particles fully burn." hopefully the dust wouldnt cause an explosion though. or maybe it would and we have a better explosive lol. could be coated to be made inert. Could focus on organic vs ionic chemicals. non-ionic should be less reactive to explode...?
 
-```{r}
-test_orgs <- as.data.frame(table(aggregated_nano_e_tox_raw_values_ml$test_organism))
-```
+Bird malaria preventer?
 
-```{r}
-type_test_orgs <- as.data.frame(table(aggregated_nano_e_tox_raw_values_ml$type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other))
-```
+nano particles in paint? deflection of UV?
 
+Is there a microparticle that could help attract micro plastics? like an ionic that mixes with the non-ionic and shifts the zeta potential so that electrical current could pick it all up to be collected and filtered from water. then used magnet to filter the plastic/ particles away? how to seperate?
 
-```{r}
-bacteria <- aggregated_nano_e_tox_raw_values_ml %>% 
-  filter(type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other == "bacteria")
-```
+How about nano-particle embedded clothing that reflects heat/UV without increasing the brightness of the person/ clothing? Options: Insulation to match environment or reflection.
 
-```{r}
-bacteria_test_orgs <- as.data.frame(table(bacteria$test_organism))
-```
+maybe a nanoparticle mix in clothes that would increase the speed of evaporation of water from clothes?
 
+Med-gel? Some sort of mixture of an adhesive, nanoparticles, and a coagulant that effectively when mixed like epoxy causes a very mild chemical, electrical reaction. Maybe it starts as a well spread mixture, then the chemicals react to change the zeta of the nanoparticles to clump? Then those nano particles dissolve into the tissue. (Nano is literally smaller than bloodcells.) Ionic nano particles are mixed into a gel and the gel fills the wound. The nanoparticles react with blood cells and other organic tissue and forms a protein corona. An electric field is created by chemical reaction thats causes a clumping effect by changing the zeta of the nanomaterials in the corona that then effectively seals fills the gel/scaffold area with coagulated blood allowing for efficient healing.
+
+^simpler version: Use nanoparticles that are dissolvable to create protien coronas that facilitate blood clotting while providing a scaffold of sorts to heal in? (gel) want low zeta potential to clump, but perhaps a high zeta somehow when stored to ensure efficient mix in the gel?
+
+what bio-physics or chemical based properties which have numbers or specific qualities that could be categorized would be criteria for such a tool?
+
+Antimicrobials? Maybe a nanoparticle that can be placed into the clothing somehow...?
