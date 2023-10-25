@@ -1,0 +1,159 @@
+---
+title: "Cleaning and Standardizing"
+author: "Connor Flynn"
+date: "10/24/2023"
+output: html_document
+---
+
+
+The purpose of this Rmd is to clean, standardize, and add meaningful columns to improve the usability of the Nano-E-Tox Database
+
+Clean
+1) Separate toxicity_value column into 2 new columns (value, unit)
+  - Unique signs in toxicity_value
+    - ± (37 ± 73 mg/L) -> solution:*needed*
+    - < | > (>10 mg/L) -> solution: 10 mg/L
+    - 2-4 mg/L -> solution: 2-4 mg/L
+2) Clean any grouping factors that have multiples(for example in organism type has mussel and mussels as two different entries, C60 fullerene, Maverick did some of this on line 447 in aggregation2.Rmd | also in nano-e-tox-exploratory-analysis line 423)
+3) Clean and potentially shorten some column names
+
+Standardize
+1) There are 42 unique units in nano-e-tox -> when we can, standardize into mg/L (the most common unit in this dataframe 902/1518)
+
+Add Columns 
+1) test_duration_aggregated based on test_duration
+  - reduce to ranges 0-6 hour, 6 hours -24 hours, 24-48 hours, 3-7 days, >7 days
+2) test_endpoint_aggregated based on test_endpoint
+  - reduce to groups as follows growth/development, survival/viability, death/mortality/cytotoxicity, weight decrease/growth inhibition/delayed hatching/ immobilization
+3) *toxicity_measure_aggregated based on toxicity_measure* need to think about/clarification
+  - categorize to types (EC, LC), percentile (50, 100 etc) or conc at which no observed effect or conc at lowest observed effects
+4) *toxicity_index*
+  - Type A: toxic but low potency (cause detrimental effects but EC/LC mg/liter is above median and NOEC is high(above median), lOEC is high (above median)
+  - Type B: toxic but high potency (cause detrimental effects but EC/LC mg/liter is below median and NOEC is low(below median), lOEC is low (below median)
+  - Type C: beneficial low potency (cause positive effects but EC mg/liter is above median)
+  - Type D: beneficial high potency (cause positive effects but EC mg/liter is below median)
+5) type_of_test_organism_aggregated
+  - Reduce to microorganism, amphibian, fish, mammal, plant etc (major phyla)
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(tidyverse)
+library(janitor)
+library(naniar)
+library(plotly)
+library(dplyr)
+library(ggpubr)
+library(caret) # predictive modeling
+library(ggplot2)
+library(purrr)
+library(randomForest)  # For RandomForest classifier
+options(scipen = 99)
+```
+
+Read in Data
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+nano_e_tox <- read_csv(here("data/Beilstein_J_Nanotechnol-06-1788-s002/NanoE-Tox-database.csv"))
+```
+
+Select columns up to column 35 (the rest are blank)
+
+```{r}
+nano_e_tox <- nano_e_tox[, 1:35]
+```
+
+Clean Column Names
+
+```{r}
+nano_e_tox <- nano_e_tox %>% 
+  clean_names()
+```
+
+Missingness 
+
+```{r}
+gg_miss_var(nano_e_tox)
+```
+
+
+Explore the toxicity value column
+
+```{r}
+class(nano_e_tox$toxicity_value)
+```
+
+Change the class of toxicity_value to factor
+
+```{r}
+nano_e_tox$toxicity_value <- as.factor(nano_e_tox$toxicity_value)
+```
+
+
+EC = Effect Concentration
+LC = Lethal Concentration
+NOEC = No Observed Effect Concentration
+LOEC = Lowest Observed Effect Concentration
+IC = Inhibitory Concentration
+
+
+
+Seperate numeric values and units into 2 separate columns
+- value
+- unit
+
+Raw values only 
+
+# ```{r}
+# aggregated_nano_e_tox_raw_values <- subset(aggregated_nano_e_tox, !grepl("\\(|±|-|>|<|≤|%|~", toxicity_value))
+# ```
+
+
+```{r}
+nano_e_tox <- nano_e_tox %>% 
+  mutate(
+    value = str_extract(toxicity_value, "[0-9.]+\\s*±\\s*[0-9.]+|[0-9.]+"),
+    unit = str_extract(toxicity_value, " [^0-9.]+[a-zA-Z/]+")
+  )
+```
+
+
+```{r}
+nano_e_tox %>% 
+  select(toxicity_value, value, unit)
+```
+
+
+```{r}
+unique(nano_e_tox$value)
+```
+
+```{r}
+nano_e_tox <- nano_e_tox %>% 
+  mutate(
+    number_before = as.numeric(str_extract(value, "^[0-9.]+")),
+    number_after = as.numeric(str_extract(value, "±\\s*([0-9.]+)$")),
+    subtraction_result = number_before - number_after
+  )
+```
+```{r}
+nano_e_tox %>% 
+  select(toxicity_value, value, unit, number_before, number_after,subtraction_result)
+```
+
+
+
+
+```{r}
+table(aggregated_nano_e_tox_raw_values$unit)
+```
+
+```{r}
+aggregated_nano_e_tox_raw_values$unit <- trimws(aggregated_nano_e_tox_raw_values$unit)
+```
+
+```{r}
+aggregated_nano_e_tox_raw_values_ml <- aggregated_nano_e_tox_raw_values %>% 
+  filter(unit == "mg/L")
+```
