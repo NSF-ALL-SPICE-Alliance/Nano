@@ -1,0 +1,50 @@
+---
+title: "Easy GEO"
+author: "Maverick Kaopio"
+date: "10/31/23"
+
+#The idea was to be able to extract all the data, but after considering context, and the sheer amount of data that would indescriminately
+# be loaded, I changed my mind. Perhaps I could use a classification model to kind of deduce that, but for the context of where we're at
+# at this point its not worth the time.
+---
+
+# Check and install the GEOquery package if not already installed
+if (!requireNamespace("GEOquery", quietly = TRUE)) {
+  if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+  BiocManager::install("GEOquery")
+}
+
+# Load required libraries
+library(GEOquery)
+library(RCurl)
+library(XML)
+
+# Read search queries from a text file
+search_queries <- readLines("~/Desktop/R-Projects&Git/Nano/AFRL_Fall_2023/search_queries.txt")
+
+# Function to extract GEO accession numbers from search results
+extractAccessionNumbers <- function(query) {
+  search_url <- paste0("https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?q=", URLencode(query))
+  search_page <- getURL(search_url)
+  parsed_page <- htmlParse(search_page)
+  accession_nodes <- getNodeSet(parsed_page, "//table[@class='QueryResults']//td[@class='GeoAcc']")
+  accession_numbers <- sapply(accession_nodes, xmlValue)
+  return(accession_numbers)
+}
+
+# Loop through search queries, extract accession numbers, and download datasets
+for (query in search_queries) {
+  accession_numbers <- extractAccessionNumbers(query)
+  
+  if (length(accession_numbers) > 0) {
+    for (accession in accession_numbers) {
+      # Download the dataset using the GEOquery package
+      gse <- getGEO(accession)
+      
+      # Perform any additional processing or analysis as needed
+    }
+  } else {
+    cat("No datasets found for query:", query, "\n")
+  }
+}

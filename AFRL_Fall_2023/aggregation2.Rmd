@@ -231,7 +231,7 @@ Same in philosopy to connor; just different method. Gonna toss anything thats > 
 plot <- ggplot(data = toxicity_category_list, aes(x = name , y = test_organism, label = value, fill = rank)) +
   geom_point(size = 1, shape = 21) +
   geom_smooth() +
-  labs(title = "Toxicity level scale (dose)",
+  labs(title = "Deadliness scale (dose)",
        x = "Toxicity",
        y = "Organism") +
   theme(axis.text.y = element_text(size = 4))
@@ -476,7 +476,7 @@ map_to_broad_category <- function(term) {
 
 # make broad categories in a new column
 aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized %>%
-  mutate(broad_grouping = map_to_broad_category(type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other))
+  mutate(broad_organism_grouping = map_to_broad_category(type_of_test_organism_selection_bacteria_algae_crustacean_protozoa_fish_earthworm_other))
 ```
 
 ```{r}
@@ -487,10 +487,40 @@ plot <- ggplot(data = aggregated_nano_e_tox_raw_values_ml_ranked_summarized_size
        y = "Log(Value)") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_fill_manual(values = fill_colors) +
-  facet_wrap(~broad_grouping)
+  facet_wrap(~broad_organism_grouping)
 
 ggplotly(plot)
 ```
+
+```{r}
+# Look at unique names
+unique_names <- unique(aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized$name)
+
+unique_names
+
+# Look at only the carbon based materials; create families for the chemicals similar to above for organisms
+carbon_based_materials <- c("MWCNT", "SWCNT", "MWCNT-OH", "MWCNT-COOH", "DWCNT", "C60 fullerene", "fullerene")
+
+aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized_chem_organised <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized %>%
+  mutate(carbon_based = ifelse(name %in% carbon_based_materials, "Carbon-Based", "Metal"))
+```
+```{r}
+# Gonna just look at carbon based stuff for now it looks like
+carbon_based <- aggregated_nano_e_tox_raw_values_ml_ranked_summarized_sized_chem_organised %>% filter(name %in% carbon_based_materials)
+
+carbon_based
+```
+Investigate the properties of fullerene as a stabilizer of cell membranes?
+
+
+Can Fullerine be used as a clothing additive which prevents bacterial buildup? (since its a photosensitized chemical), which would be negligible if consumed.
+Can Fullerene heal cystic fibrosis/ lungs damaged by chemicals of war?
+
+
+
+
+
+
 
 I want to generate predictive data based on the data we have that may indicate if a chemical may be poisonous at a different dose:
 name, test_organism, effect, value, rank, mean_value_dose
@@ -631,5 +661,7 @@ Med-gel? Some sort of mixture of an adhesive, nanoparticles, and a coagulant tha
 ^simpler version: Use nanoparticles that are dissolvable to create protien coronas that facilitate blood clotting while providing a scaffold of sorts to heal in? (gel) want low zeta potential to clump, but perhaps a high zeta somehow when stored to ensure efficient mix in the gel?
 
 what bio-physics or chemical based properties which have numbers or specific qualities that could be categorized would be criteria for such a tool?
+
+How about nanoparticles which have a beneficial effect? Perhaps can locally detox things like lung cells from damage or something by providing substrate directly to the cell? or perhaps helping the cell to rid itself of some toxic chemical? How about to help cystic fibrosis?
 
 Antimicrobials? Maybe a nanoparticle that can be placed into the clothing somehow...?

@@ -1,0 +1,102 @@
+---
+title: "Open Sesame"
+author: "Maverick Kaopio"
+date: "10/31/23"
+output: "?"
+---
+```{r}
+# Files of Interest:
+#  GSE92901, 	Distinct Sets Of Genes Representing Overlapping Biological Functions Are Altered By Intrinsic Properties Of Carbon Nanomaterials In Vitro And In Vivo
+#***** This data is gene expression rates? I assume its relative? 1 = normal expression, more = increase, less = decrease.
+
+# GSE159707, A transcriptomic overview of lung and liver changes one day after pulmonary exposure to graphene and graphene oxide
+
+# GSE92900, Distinct Sets Of Genes Representing Overlapping Biological Functions Are Altered By Intrinsic Properties Of Carbon Nanomaterials In Vitro And In Vivo [mouse]
+
+```
+
+```{r}
+# Version info: R 4.2.2, Biobase 2.58.0, GEOquery 2.66.0, limma 3.54.0
+################################################################
+#   Data plots for selected GEO samples
+library(GEOquery)
+library(limma)
+library(umap)
+library(sf)
+
+file = "GSE92901" # Plug in GEO accession ex: "GSE92899"
+gpl = "GPL13912" # Ensure you're using the proper format to extract the data
+
+
+# load series and platform data from GEO
+gset <- getGEO(file, GSEMatrix =TRUE, getGPL=TRUE)
+if (length(gset) > 1) idx <- grep(gpl, attr(gset, "names")) else idx <- 1
+gset <- gset[[idx]]
+
+ex <- exprs(gset)
+# log2 transform
+qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
+LogC <- (qx[5] > 100) ||
+          (qx[6]-qx[1] > 50 && qx[2] > 0)
+if (LogC) { ex[which(ex <= 0)] <- NaN
+  ex <- log2(ex) }
+
+# box-and-whisker plot
+dev.new(width=3+ncol(gset)/6, height=5)
+par(mar=c(7,4,2,1))
+title <- paste (file, "/", annotation(gset), sep ="")
+boxplot(ex, boxwex=0.7, notch=T, main=title, outline=FALSE, las=2)
+dev.off()
+
+# expression value distribution plot
+par(mar=c(4,4,2,1))
+title <- paste (file, "/", annotation(gset), " value distribution", sep ="")
+plotDensities(ex, main=title, legend=F)
+
+# mean-variance trend
+ex <- na.omit(ex) # eliminate rows with NAs
+plotSA(lmFit(ex), main="Mean variance trend")
+```
+
+```{r}
+# Checkout where the features we want are at
+View(gset)
+```
+
+```{r}
+# Access feature (gene) names from gset
+# Extract the first row from phenoData
+first_row <- gset@phenoData@data[["source_name_ch1"]] # Material Name
+second_row <- gset@phenoData@data[["organism_ch1"]] # Organism
+third_row <- gset@phenoData@data[["tissue:ch1"]] # Point of Exposure
+fourth_row <- gset@phenoData@data[["characteristics_ch1.5"]] # Amount of Exposure
+fifth_row <- gset@phenoData@data[["exposure:ch1"]] # Time of Exposure
+sixth_row <- gset@featureData@data[["GENE_SYMBOL"]] # Gene
+
+# Adding them all back to gset
+pData(gset)$Material_Name <- first_row
+pData(gset)$Organism <- second_row
+pData(gset)$Point_of_Exposure <- third_row
+pData(gset)$Amount_of_Exposure <- fourth_row
+pData(gset)$Time_of_Exposure <- fifth_row
+pData(gset)$Gene <- sixth_row
+```
+
+```{r}
+feature_names <- featureData(gset)
+pheno_names <- phenoData(gset)
+
+feature_names
+pheno_names
+```
+
+```{r}
+# Update the ex variable with feature names
+rownames(ex) <- feature_names
+rownames(ex) <- pheno_names
+
+ex
+```
+
+
+
