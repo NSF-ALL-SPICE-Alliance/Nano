@@ -4,6 +4,7 @@ author: "Maverick Kaopio"
 date: "10/31/23"
 output: "?"
 ---
+
 ```{r}
 # Files of Interest:
 #  GSE92901, 	Distinct Sets Of Genes Representing Overlapping Biological Functions Are Altered By Intrinsic Properties Of Carbon Nanomaterials In Vitro And In Vivo
@@ -23,6 +24,7 @@ library(GEOquery)
 library(limma)
 library(umap)
 library(sf)
+library(dplyr)
 
 file = "GSE92901" # Plug in GEO accession ex: "GSE92899"
 gpl = "GPL13912" # Ensure you're using the proper format to extract the data
@@ -56,47 +58,75 @@ plotDensities(ex, main=title, legend=F)
 # mean-variance trend
 ex <- na.omit(ex) # eliminate rows with NAs
 plotSA(lmFit(ex), main="Mean variance trend")
+
+print("Each GSM represents a different test, and the data within it are the different gene's, and their level of expression.")
 ```
 
 ```{r}
 # Checkout where the features we want are at
-View(gset)
+# Need to separate the test sample from genes & level of expression
+
+#View(gset)
 ```
 
 ```{r}
 # Access feature (gene) names from gset
 # Extract the first row from phenoData
+
 first_row <- gset@phenoData@data[["source_name_ch1"]] # Material Name
 second_row <- gset@phenoData@data[["organism_ch1"]] # Organism
 third_row <- gset@phenoData@data[["tissue:ch1"]] # Point of Exposure
 fourth_row <- gset@phenoData@data[["characteristics_ch1.5"]] # Amount of Exposure
 fifth_row <- gset@phenoData@data[["exposure:ch1"]] # Time of Exposure
 sixth_row <- gset@featureData@data[["GENE_SYMBOL"]] # Gene
+seventh_row <- gset@featureData@data[["GENE_NAME"]] # Gene purpose?
+eighth_row <- gset@assayData[["exprs"]] # The actual level of expression
+row_averages <- rowMeans(eighth_row) # Going to take the average of ^ so we dont have multiple columns
 
-# Adding them all back to gset
-pData(gset)$Material_Name <- first_row
-pData(gset)$Organism <- second_row
-pData(gset)$Point_of_Exposure <- third_row
-pData(gset)$Amount_of_Exposure <- fourth_row
-pData(gset)$Time_of_Exposure <- fifth_row
-pData(gset)$Gene <- sixth_row
+#ninth_row <- gset@experimentData@url # Identification so we know where this data came from and is different from other sets
+  #id = ninth_row
+
+df <- data.frame(
+  material = first_row,
+  organism = second_row,
+  point_of_exposure = third_row,
+  amount_of_exposure = fourth_row,
+  time_of_exposure = fifth_row,
+  gene = sixth_row,
+  gene_name = seventh_row,
+  level_of_expression = row_averages
+)
+
+df
+
 ```
 
 ```{r}
-feature_names <- featureData(gset)
-pheno_names <- phenoData(gset)
+# Focus on creating baselines for each gene?
+# control groupings of materials
 
-feature_names
-pheno_names
+# Group by controls, re-install via gene & gene_name
+df2 <- df %>%
+  filter(material == "Ctrl")
+
+# New name from old name
+colnames(df2)[colnames(df2) == "level_of_expression"] <- "control_level_of_expression"
+
+df2
 ```
 
 ```{r}
-# Update the ex variable with feature names
-rownames(ex) <- feature_names
-rownames(ex) <- pheno_names
+# Drop materials = Ctrl from original df
+df <- df %>%
+  filter(material != "Ctrl")
 
-ex
+df
 ```
 
+```{r}
+# Add new Ctrl column from grouped_df
+df <- df %>%
+  right_join(df2, by = c("gene"))
 
-
+df
+```
